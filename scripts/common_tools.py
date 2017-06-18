@@ -20,7 +20,7 @@ def get_sleep_time(max_requests_per_min):
 	return math.ceil(max_requests_per_min / 60) + time_gap
 
 
-""" Thin wrappers to Riot API (v3) """
+""" Thin wrappers around Riot API (v3) """
 def get_url_prefix(region_name):
 	""" Create URL prefix, which is the Riot Game API website. """
 	return "https://" + region_name + ".api.riotgames.com/lol"
@@ -52,7 +52,7 @@ def get_summoner_by_name(url_prefix, url_suffix, summoner_name):
 
 def get_summoner_by_id(url_prefix, url_suffix, summoner_id):
 	""" Use Summoner v3 API call, and return SummonerDTO. """
-	return url_prefix + "/summoner/v3/summoners/" + summoner_id + url_suffix
+	return url_prefix + "/summoner/v3/summoners/" + str(summoner_id) + url_suffix
 
 
 def get_match_list_by_account_id(url_prefix, url_suffix, account_id):
@@ -84,7 +84,6 @@ def get_json_by_request(api_cmd, max_attempts=5):
 		resp_code = c.getinfo(c.RESPONSE_CODE)
 		if resp_code == 200:
 			""" Do something with response body """
-			print buffer.getvalue()
 			break
 		elif resp_code in [400, 429]:
 			print "ERROR: Bad request\n" + api_cmd + "\nExiting..."
