@@ -18,7 +18,7 @@ def get_api_key ():
 
 
 def get_sleep_time(max_requests_per_min):
-	time_gap = 2	# seconds
+	time_gap = 5	# seconds
 	return math.ceil(max_requests_per_min / 60.0) + time_gap
 
 
