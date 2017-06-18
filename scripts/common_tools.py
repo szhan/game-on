@@ -17,7 +17,7 @@ def get_api_key ():
 
 def get_sleep_time(max_requests_per_min):
 	time_gap = 2	# seconds
-	return math.ceil(max_requests_per_min / 60) + time_gap
+	return math.ceil(max_requests_per_min / 60.0) + time_gap
 
 
 """ Thin wrappers around Riot API (v3) """
@@ -76,7 +76,7 @@ def get_match_endpoint_by_match_id(url_prefix, url_suffix, match_id):
 	Use Match v3 API call, and return MatchDto, which contains multiple types of data:
 	(1) ParticipantIdentityDto -> PlayerDto, (2) TeamStatsDto, and (3) ParticipantDto, and more.
 	"""
-	return url_prefix + "/match/v3/matches/" + match_id + url_suffix
+	return url_prefix + "/match/v3/matches/" + str(match_id) + url_suffix
 
 
 def get_match_timeline_by_match_id(url_prefix, url_suffix, match_id):
@@ -84,7 +84,7 @@ def get_match_timeline_by_match_id(url_prefix, url_suffix, match_id):
 	Use Match v3 API call, and return MatchTimelineDto, which contains multiple types of data:
 	(1) MatchFrameDto, (2) MatchParticipantFrameDto, (3) MatchEventDto, and more.
 	"""
-	return url_prefix + "/match/v3/timelines/by-match/" + match_id + url_suffix
+	return url_prefix + "/match/v3/timelines/by-match/" + str(match_id) + url_suffix
 
 
 def get_json_by_request(api_cmd, max_attempts=5):
