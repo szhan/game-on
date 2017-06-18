@@ -42,6 +42,10 @@ def get_masters_by_queue(url_prefix, url_suffix, queue_type):
 
 
 def get_summoner_by_name(url_prefix, url_suffix, summoner_name):
+	"""
+	Use Summoner v3 API call, and return SummonerDTO. 
+	Contents include 'name', 'id', and 'accountId', but see Riot API doc.
+	"""
 	return url_prefix + "/summoner/v3/summoners/by-name/" + summoner_name + url_suffix
 
 
