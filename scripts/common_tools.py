@@ -22,20 +22,22 @@ def get_sleep_time(max_requests_per_min):
 
 """ Thin wrappers to Riot API (v3) """
 def get_url_prefix(region_name):
-	""" Create URL prefix, which is the Riot Game API website """
+	""" Create URL prefix, which is the Riot Game API website. """
 	return "https://" + region_name + ".api.riotgames.com/lol"
 
 
 def get_url_suffix(user_api_key):
-	""" Create URL suffix for appending API key """
+	""" Create URL suffix for appending API key. """
 	return "?api_key=" + user_api_key
 
 
-def get_challengers(url_prefix, url_suffix, queue_type):
+def get_challengers_by_queue(url_prefix, url_suffix, queue_type):
+	""" Use League v3 API call, and return LeagueListDTO. """
 	return url_prefix + "/league/v3/challengerleagues/by-queue/" + queue_type + url_suffix
 
 
-def get_masters(url_prefix, url_suffix, queue_type):
+def get_masters_by_queue(url_prefix, url_suffix, queue_type):
+	""" Use League v3 API call, and return LeagueListDTO. """
 	return url_prefix + "/league/v3/masterleagues/by-queue/" + queue_type + url_suffix
 
 
