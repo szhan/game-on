@@ -55,8 +55,20 @@ def get_summoner_by_id(url_prefix, url_suffix, summoner_id):
 	return url_prefix + "/summoner/v3/summoners/" + str(summoner_id) + url_suffix
 
 
-def get_match_list_by_account_id(url_prefix, url_suffix, account_id):
-	return url_prefix + "/match/v3/matchlists/by-account/" + account_id + url_suffix
+def get_match_list_by_account_id(url_prefix, url_suffix, account_id, recent=False):
+	"""
+	Use Match v3 API call, and return MatchlistDto, which contains a list of MatchReferenceDto.
+	This return the full match history available, and data for each match is accessed via MatchReferenceDto.	
+	Contents include 'matches' (list of MatchReferenceDto) and 'totalGames'.
+	
+	MatchReferenceDto contains 'lane', 'gameId', 'champion', 'role', but see Riot API doc.
+	
+	If recent set to True, then only data for the last 20 matches played are retrieved.
+	"""
+	if recent:
+		return url_prefix + "/match/v3/matchlists/by-account/" + str(account_id) + "/recent" + url_suffix
+	else:
+		return url_prefix + "/match/v3/matchlists/by-account/" + str(account_id) + url_suffix
 
 
 def get_match_endpoint_by_match_id(url_prefix, url_suffix, match_id):
