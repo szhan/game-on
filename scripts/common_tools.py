@@ -1,11 +1,13 @@
-import time, math
+import time
+import math
 import pycurl
+from datetime import date
 from StringIO import StringIO
 
 
 """ Simple utilities """
 def get_api_key ():
-	""" The file containing the API key is assumed to be in the main dir """
+	""" The file containing the API key is assumed to be in the main directory. """
 	api_key_file = "../API_KEY"
 	
 	key = None
@@ -18,6 +20,11 @@ def get_api_key ():
 def get_sleep_time(max_requests_per_min):
 	time_gap = 2	# seconds
 	return math.ceil(max_requests_per_min / 60.0) + time_gap
+
+
+def get_formatted_date():
+	""" Get current date YYYY-MM-DD as string. """
+	print date.today().strftime("%Y_%m_%d")
 
 
 """ Thin wrappers around Riot API (v3) """
