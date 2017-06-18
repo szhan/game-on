@@ -87,7 +87,7 @@ def get_match_timeline_by_match_id(url_prefix, url_suffix, match_id):
 	return url_prefix + "/match/v3/timelines/by-match/" + str(match_id) + url_suffix
 
 
-def get_json_by_request(api_cmd, max_attempts=5):
+def get_json_by_request(api_cmd, max_attempts=5, sleep_time=3):
 	""" Send request to Riot API server, and handle response, retrying requests up to a specified number of times. """
 	json_data = None
 	nbr_attempts = 0
@@ -124,7 +124,7 @@ def get_json_by_request(api_cmd, max_attempts=5):
 		if nbr_attempts >= max_attempts:
 			break
 		
-		time.sleep(SLEEP_TIME)
+		time.sleep(sleep_time)
 	
 	c.close()
 	
