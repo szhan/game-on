@@ -45,8 +45,14 @@ def get_summoner_by_name(url_prefix, url_suffix, summoner_name):
 	"""
 	Use Summoner v3 API call, and return SummonerDTO. 
 	Contents include 'name', 'id', and 'accountId', but see Riot API doc.
+	WARNING: Use 'get_summoner_by_id' instead, because it is safer due to inconsistent encoding.
 	"""
 	return url_prefix + "/summoner/v3/summoners/by-name/" + summoner_name + url_suffix
+
+
+def get_summoner_by_id(url_prefix, url_suffix, summoner_id):
+	""" Use Summoner v3 API call, and return SummonerDTO. """
+	return url_prefix + "/summoner/v3/summoners/" + summoner_id + url_suffix
 
 
 def get_match_list_by_account_id(url_prefix, url_suffix, account_id):
