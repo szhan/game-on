@@ -111,20 +111,22 @@ def get_json_by_request(api_cmd, max_attempts=5, sleep_time=3):
 		resp_code = c.getinfo(c.RESPONSE_CODE)
 		if resp_code == 200:
 			""" Do something with response body """
+			json_data = buffer.getvalue()
 			break
 		elif resp_code in [400, 429]:
-			print "ERROR: Bad request\n" + api_cmd + "\nExiting..."
+			""" TODO: Find better way to handle these responses. """
+			print "ERROR: Bad request\n" + api_cmd + "\nSkipping..."
 			break
 		elif resp_code == 403:
-			print "ERROR: Rate limit violated! Check with Riot! Exiting..."
+			print "ERROR: Rate limit violated! Check with Riot!"
 			break
 		elif resp_code in [500, 503]:
-			print "ERROR: Riot API server is down or unable to fulfill request. Exiting..."
+			print "ERROR: Riot API server is down or unable to fulfill request."
 			break
 		elif resp_code == 429:
 			""" Service could have been temporarily unavailable. Retry. """
 		else:
-			print "ERROR: Unrecognized HTTP response code " + resp_code + ". Exiting..."
+			print "ERROR: Unrecognized HTTP response code " + resp_code + ". Skipping..."
 			break
 		
 		nbr_attempts += 1
@@ -134,8 +136,6 @@ def get_json_by_request(api_cmd, max_attempts=5, sleep_time=3):
 		time.sleep(sleep_time)
 	
 	c.close()
-	
-	json_data = buffer.getvalue()
 	
 	return json_data
 
