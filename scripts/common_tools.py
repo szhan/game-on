@@ -8,7 +8,7 @@ from StringIO import StringIO
 """ Simple utilities """
 def get_api_key ():
 	""" The file containing the API key is assumed to be in the main directory. """
-	api_key_file = "../API_KEY"
+	api_key_file = "API_KEY"
 	
 	key = None
 	with open(api_key_file) as file:
