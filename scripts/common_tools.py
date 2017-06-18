@@ -24,7 +24,7 @@ def get_sleep_time(max_requests_per_min):
 
 def get_formatted_date():
 	""" Get current date YYYY-MM-DD as string. """
-	print date.today().strftime("%Y_%m_%d")
+	return date.today().strftime("%Y_%m_%d")
 
 
 """ Thin wrappers around Riot API (v3) """
