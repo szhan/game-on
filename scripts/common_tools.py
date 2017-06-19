@@ -18,7 +18,7 @@ def get_api_key ():
 
 
 def get_sleep_time(max_requests_per_min):
-	time_gap = 5	# seconds
+	time_gap = 2	# seconds
 	return math.ceil(max_requests_per_min / 60.0) + time_gap
 
 
@@ -94,7 +94,7 @@ def get_match_timeline_by_match_id(url_prefix, url_suffix, match_id):
 	return url_prefix + "/match/v3/timelines/by-match/" + str(match_id) + url_suffix
 
 
-def get_json_by_request(api_cmd, max_attempts=5, sleep_time=3):
+def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 	""" Send request to Riot API server, and handle response, retrying requests up to a specified number of times. """
 	json_data = None
 	nbr_attempts = 0
@@ -110,12 +110,12 @@ def get_json_by_request(api_cmd, max_attempts=5, sleep_time=3):
 		""" Retry until successful. Not entirely sure if 0 is really the expected response... """
 		resp_code = c.getinfo(c.RESPONSE_CODE)
 		if resp_code == 200:
-			""" Do something with response body """
+			""" Success! Do something with response body. """
 			json_data = buffer.getvalue()
 			break
 		elif resp_code in [400, 429]:
 			""" TODO: Find better way to handle these responses. """
-			print "ERROR: Bad request\n" + api_cmd + "\nSkipping..."
+			print "ERROR: Bad request with code " + str(resp_code) + "\nSkipping..."
 			break
 		elif resp_code == 403:
 			print "ERROR: Rate limit violated! Check with Riot!"
