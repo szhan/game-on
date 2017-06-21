@@ -60,8 +60,10 @@ for league_item_dto in league_list_dto["entries"]:
 	
 	for match_reference_dto in match_list_dto["matches"][:NBR_GAMES]:
 		game_id = match_reference_dto["gameId"]
-		queue = match_reference_dto["queue"] 
-		if queue != 420: continue	# 420 represents ranked_solo_queue_5v5?
+		queue = match_reference_dto["queue"]
+		
+		# Skip unless RANKED_SOLO_5x5 (queueType=4) or TEAM_BUILDER_RANKED_SOLO (queueType=420)
+		if queue not in [4, 420]: continue
 		
 		match_dto = ct.get_json_data(ct.get_match_endpoint_by_match_id(URL_PREFIX, URL_SUFFIX, game_id), sleep_time=SLEEP_TIME)
 		match_timeline_dto = ct.get_json_data(ct.get_match_timeline_by_match_id(URL_PREFIX, URL_SUFFIX, game_id), sleep_time=SLEEP_TIME)
