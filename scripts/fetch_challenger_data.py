@@ -29,7 +29,7 @@ USER_API_KEY = ct.get_api_key()
 
 # Default rate limit, unless requested
 # 500 requests every 10 minutes
-MAX_REQUESTS_PER_MIN = ct.max_requests_per_min
+MAX_REQUESTS_PER_MIN = args.max_requests_per_min
 SLEEP_TIME = ct.get_sleep_time(MAX_REQUESTS_PER_MIN)
 
 URL_PREFIX = ct.get_url_prefix(REGION)
