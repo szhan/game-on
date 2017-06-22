@@ -17,6 +17,7 @@ Basic workflow to get match endpoint data for 20 recent
 
 parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger ranked solo queue 5x5 games.")
 parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA, BR1, EUN1, KR, and OC1)')
+parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=50, help='Specify max request per minute (default = 50 sec)')
 args = parser.parse_args()
 
 
@@ -28,7 +29,7 @@ USER_API_KEY = ct.get_api_key()
 
 # Default rate limit, unless requested
 # 500 requests every 10 minutes
-MAX_REQUESTS_PER_MIN = 50
+MAX_REQUESTS_PER_MIN = ct.max_requests_per_min
 SLEEP_TIME = ct.get_sleep_time(MAX_REQUESTS_PER_MIN)
 
 URL_PREFIX = ct.get_url_prefix(REGION)
