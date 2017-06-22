@@ -144,7 +144,7 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 			print "ERROR: Riot API server is down or unable to fulfill request."
 			break
 		else:
-			print "ERROR: Unrecognized HTTP response code " + resp_code + ". Skipping..."
+			print "ERROR: Unrecognized HTTP response code " + str(resp_code) + ". Skipping..."
 			break
 		
 		nbr_attempts += 1
