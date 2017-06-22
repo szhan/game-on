@@ -1,4 +1,6 @@
+import sys
 import json
+import argparse
 import common_tools as ct
 
 
@@ -13,7 +15,12 @@ Basic workflow to get match endpoint data for 20 recent
 """
 
 
-REGION = "kr"	# e.g., "na", "eun1", "euw1", "br"
+parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger ranked solo queue 5x5 games.")
+parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA, BR1, EUN1, KR, and OC1)')
+args = parser.parse_args()
+
+
+REGION = args.region
 QUEUE_TYPE = "RANKED_SOLO_5x5"
 NBR_GAMES = 20
 
@@ -23,13 +30,12 @@ USER_API_KEY = ct.get_api_key()
 # 500 requests every 10 minutes
 MAX_REQUESTS_PER_MIN = 50
 SLEEP_TIME = ct.get_sleep_time(MAX_REQUESTS_PER_MIN)
-print SLEEP_TIME
 
 URL_PREFIX = ct.get_url_prefix(REGION)
 URL_SUFFIX = ct.get_url_suffix(USER_API_KEY)
 
-
 DATETIME = ct.get_formatted_date()
+
 OUT_DIR = "data/"
 OUT_FILE_ENDPOINTS = OUT_DIR + "-".join(["challengers", "endpoints", REGION, QUEUE_TYPE, DATETIME]) + ".json"
 OUT_FILE_TIMELINES = OUT_DIR + "-".join(["challengers", "timelines", REGION, QUEUE_TYPE, DATETIME]) + ".json"
