@@ -8,8 +8,9 @@ It is assumed that a file named 'API_KEY', which contains the user API key, is i
 
 "participantFrames",
 e.g.,
-	{
-	"participantFrames":
+```javascript
+{
+"participantFrames":
 	{
 	"1":{"participantId":1,"currentGold":377,"totalGold":8777,"level":14,"xp":11445,"minionsKilled":199,"jungleMinionsKilled":1},
 	"2":{"participantId":2,"currentGold":233,"totalGold":6388,"level":11,"xp":7323,"minionsKilled":37,"jungleMinionsKilled":0},
@@ -20,16 +21,19 @@ e.g.,
 	"7":{"participantId":7,"currentGold":673,"totalGold":10048,"level":13,"xp":10752,"minionsKilled":204,"jungleMinionsKilled":1},
 	"8":{"participantId":8,"currentGold":144,"totalGold":7544,"level":11,"xp":7744,"minionsKilled":26,"jungleMinionsKilled":8},
 	"9":{"participantId":9,"currentGold":1025,"totalGold":11275,"level":14,"xp":12844,"minionsKilled":29,"jungleMinionsKilled":165},
-	"10":{"participantId":10,"currentGold":552,"totalGold":10077,"level":14,"xp":11854,"minionsKilled":194,"jungleMinionsKilled":3}},	
-	"events":[
+	"10":{"participantId":10,"currentGold":552,"totalGold":10077,"level":14,"xp":11854,"minionsKilled":194,"jungleMinionsKilled":3}
+	},
+	"events":
+	[
 	{"type":"WARD_PLACED","timestamp":1441294,"wardType":"YELLOW_TRINKET","creatorId":3},
 	{"type":"WARD_PLACED","timestamp":1452236,"wardType":"YELLOW_TRINKET","creatorId":3},
 	{"type":"WARD_PLACED","timestamp":1460124,"wardType":"UNDEFINED","creatorId":9},
 	{"type":"BUILDING_KILL","timestamp":1460454,"position":{"x":1512,"y":6699},"killerId":10,"assistingParticipantIds":[6,7,8],"teamId":100,"buildingType":"TOWER_BUILDING","laneType":"TOP_LANE","towerType":"INNER_TURRET"},
 	{"type":"WARD_PLACED","timestamp":1462373,"wardType":"SIGHT_WARD","creatorId":8},
 	{"type":"WARD_KILL","timestamp":1464188,"wardType":"CONTROL_WARD","killerId":9},
-	{"type":"SKILL_LEVEL_UP","timestamp":1464650,"participantId":1,"skillSlot":2,"levelUpType":"NORMAL"}],
+	{"type":"SKILL_LEVEL_UP","timestamp":1464650,"participantId":1,"skillSlot":2,"levelUpType":"NORMAL"}
+	],
 	"timestamp":1500600
-	}
-	
+}
+```
 
