@@ -1,5 +1,6 @@
-import time
+import argparse
 import math
+import time
 import pycurl
 from datetime import date
 from StringIO import StringIO
@@ -15,6 +16,21 @@ def get_api_key ():
 		key = file.read().rstrip()
 	
 	return key
+
+
+def check_region_name(region_name):
+	""" Check if region name is valid. """
+	valid_region_names = [	'BR1', 'EUN1', 'EUW1',
+				'JP1', 'KR', 'LA1',
+				'LA2', 'NA1', 'NA',
+				'OC1', 'TR1', 'RU', 'PBE1'
+				]
+	
+	if region_name not in valid_region_names:
+		msg = "ERROR: Region name is invalid!"
+		raise argparse.ArgumentTypeError(msg)
+	else:
+		return region_name
 
 
 def get_sleep_time(max_requests_per_min, time_gap=2):
