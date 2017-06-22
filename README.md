@@ -5,6 +5,23 @@ This repo contains very lightweight wrappers to the Riot Games API. It supports 
 It is assumed that a file named 'API_KEY', which contains the user API key, is in the main directory.
 
 ## Notes about DTOs:
+Data are packed into JSON strings in a hierarchical manner:
+MatchDto
+	ParticipantIdentityDto		list[dto]
+		PlayerDto
+	TeamStatsDto			list[dto]
+		TeamBansDto		list[dto]
+	ParticipantDto			list[dto]
+		ParticipantStatsDto
+		RuneDto			list[dto]
+		ParticipantTimelineDto
+		MasteryDto		list[dto]
+
+MatchTimelineDto
+	MatchFrameDto			list[dto]
+	MatchParticipantFrameDto	map[int,dto]
+		MatchPositionDto
+	MatchEventDto			list[dto]
 
 "participantFrames",
 e.g.,
@@ -36,4 +53,8 @@ e.g.,
 	"timestamp":1500600
 }
 ```
+
+## TODO list
+1. Store gameId during API calls.
+2. Partition data into one file per game (maybe endpoint and timeline data for the same game together).
 
