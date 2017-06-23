@@ -93,8 +93,8 @@ for league_item_dto in league_list_dto["entries"]:
 		match_timeline_dto = ct.get_json_data(ct.get_match_timeline_by_match_id(URL_PREFIX, URL_SUFFIX, game_id), sleep_time=SLEEP_TIME)
 		
 		if match_dto is not None and match_timeline_dto is not None:
-			fh_endpoints.write(match_dto + "\n")
-			fh_timelines.write(match_timeline_dto + "\n")
+			fh_endpoints.write(str(game_id) + "\t" + match_dto + "\n")
+			fh_timelines.write(str(game_id) + "\t" + match_timeline_dto + "\n")
 	
 
 fh_summoners.close()
