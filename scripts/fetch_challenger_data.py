@@ -38,10 +38,18 @@ URL_SUFFIX = ct.get_url_suffix(USER_API_KEY)
 DATETIME = ct.get_formatted_date()
 
 OUT_DIR = "data/"
-OUT_FILE_ENDPOINTS = OUT_DIR + "-".join(["challengers", "endpoints", REGION, QUEUE_TYPE, DATETIME]) + ".json"
-OUT_FILE_TIMELINES = OUT_DIR + "-".join(["challengers", "timelines", REGION, QUEUE_TYPE, DATETIME]) + ".json"
+
+def get_file_name(data_type):
+	return OUT_DIR + "-".join(["challengers", data_type, REGION, QUEUE_TYPE, DATETIME]) + ".json"
 
 
+OUT_FILE_SUMMONERS = get_file_name("summoners")
+OUT_FILE_MATCHLIST = get_file_name("matchlist")
+OUT_FILE_ENDPOINTS = get_file_name("endpoints")
+OUT_FILE_TIMELINES = get_file_name("timelines")
+
+fh_summoners = open(OUT_FILE_SUMMONERS, 'w')
+fh_matchlist = open(OUT_FILE_MATCHLIST, 'w')
 fh_endpoints = open(OUT_FILE_ENDPOINTS, 'w')
 fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
@@ -52,20 +60,29 @@ for league_item_dto in league_list_dto["entries"]:
 	player_id = league_item_dto["playerOrTeamId"]
 	print "INFO: Getting data for player " + player_id
 	
+	""" Extract accountId from SummonerDTO for querying match history. """
+	account_id = None
 	summoner_dto = ct.get_json_data(ct.get_summoner_by_id(URL_PREFIX, URL_SUFFIX, player_id), sleep_time=SLEEP_TIME)
+	
 	if summoner_dto is None:
 		continue
 	else:
-		summoner_dto = json.loads(summoner_dto)
+		account_id = json.loads(summoner_dto)["accountId"]
 	
-	account_id = summoner_dto["accountId"]
+	matches = None
 	match_list_dto = ct.get_json_data(ct.get_match_list_by_account_id(URL_PREFIX, URL_SUFFIX, account_id), sleep_time=SLEEP_TIME)
+	
 	if match_list_dto is None:
 		continue
 	else:
-		match_list_dto = json.loads(match_list_dto)
+		matches = json.loads(match_list_dto)["matches"]
 	
-	for match_reference_dto in match_list_dto["matches"][:NBR_GAMES]:
+	""" Store SummonerDTO and MatchListDTO separately. """
+	fh_summoners.write(str(account_id) + "\t" + summoner_dto + "\n")
+	fh_matchlist.write(str(account_id) + "\t" + match_list_dto + "\n")
+	
+	""" Get match endpoint and timeline data for NBR_GAMES games. """
+	for match_reference_dto in matches[:NBR_GAMES]:
 		game_id = match_reference_dto["gameId"]
 		queue = match_reference_dto["queue"]
 		
@@ -75,12 +92,13 @@ for league_item_dto in league_list_dto["entries"]:
 		match_dto = ct.get_json_data(ct.get_match_endpoint_by_match_id(URL_PREFIX, URL_SUFFIX, game_id), sleep_time=SLEEP_TIME)
 		match_timeline_dto = ct.get_json_data(ct.get_match_timeline_by_match_id(URL_PREFIX, URL_SUFFIX, game_id), sleep_time=SLEEP_TIME)
 		
-		if match_dto is not None:
+		if match_dto is not None and match_timeline_dto is not None:
 			fh_endpoints.write(match_dto + "\n")
-		if match_timeline_dto is not None:
 			fh_timelines.write(match_timeline_dto + "\n")
+	
 
-
+fh_summoners.close()
+fh_matchlist.close()
 fh_endpoints.close()
 fh_timelines.close()
 
