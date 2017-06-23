@@ -16,8 +16,11 @@ IN_ENDPOINT_FILE = args.in_endpoint_file
 OUT_FILE = args.out_file
 
 
-ENDPOINT_DATA = {}
-TEAM_DATA = {}
+ENDPOINT_DATA = {}	# Account id
+TEAM_DATA = {}		# Team id
+DURATION_DATA = {}	# Game duration, "gameDuration" in MatchDto
+OUTCOME_DATA = {}	# Win, "win" in TeamStatsDto
+
 
 for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 'r')]:
 	"""
@@ -25,12 +28,13 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 	instead of account id (unique player identifiers outside each game).
 	
 	Extract from the corresponding match endpoint data to find the mapping
-	between in-game participant ids and account ids and also team ids.
+	between in-game participant ids and account ids/team ids/game duration/win.
 	"""
 	
 	json_data = json.loads(json_str)
 	participant_account_map = {}	# Map participant id to account id
 	participant_team_map = {}	# Map participant id to team id
+	team_outcome_map = {}		# Map team id to win
 	
 	list_participant_identity_dto = json_data["participantIdentities"]
 	for participant in list_participant_identity_dto:
@@ -38,15 +42,22 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		account_id = participant["player"]["accountId"]
 		participant_account_map[participant_id] = account_id
 	
-	ENDPOINT_DATA[game_id] = participant_account_map
-	
 	list_participant_dto = json_data["participants"]
 	for participant in list_participant_dto:
 		participant_id = participant["participantId"]
 		team_id = participant["teamId"]
 		participant_team_map[participant_id] = team_id
 	
+	list_team_stats_dto = json_data["teams"]
+	for team in list_team_stats_dto:
+		team_id = team["teamId"]
+		win = team["win"]
+		team_outcome_map[team_id] = win
+	
+	ENDPOINT_DATA[game_id] = participant_account_map
 	TEAM_DATA[game_id] = participant_team_map
+	DURATION_DATA[game_id] = json_data["gameDuration"]
+	OUTCOME_DATA[game_id] = team_outcome_map
 
 
 fh_csv = open(OUT_FILE, 'w')
@@ -54,7 +65,8 @@ fh_csv = open(OUT_FILE, 'w')
 
 # Print header
 fh_csv.write(",".join([
-			'gameId', 'timestamp', 'accountId', 'teamId', 
+			'gameId', 'gameDuration', 'timestamp',
+			'accountId', 'teamId', 'win',
 			'totalGold', 'currentGold', 'level', 'xp',
 			'minionsKilled', 'jungleMinionsKilled',
 			'positionX', 'positionY',
@@ -68,6 +80,8 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 	json_data = json.loads(json_str)
 	endpoint_data = ENDPOINT_DATA[game_id]
 	team_data = TEAM_DATA[game_id]
+	duration_data = DURATION_DATA[game_id]
+	outcome_data = OUTCOME_DATA[game_id]
 	
 	for frame in json_data["frames"]:
 		# Parse event data in dict, where key is participant id and value is count
@@ -124,9 +138,11 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 			fh_csv.write(",".join(str(x)
 						for x in [
 							game_id,
+							duration_data,
 							frame["timestamp"],
-							endpoint_data[player_id],	# account id
-							team_data[player_id],		# team id
+							endpoint_data[player_id],		# account id
+							team_data[player_id],			# team id
+							outcome_data[team_data[player_id]],
 							player_data["totalGold"],
 							player_data["currentGold"],
 							player_data["level"],
