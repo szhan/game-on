@@ -5,24 +5,28 @@ from io import StringIO
 
 parser = argparse.ArgumentParser(description="Extract timeline data from a JSON file and dump into a CSV file.")
 parser.add_argument('-i', '--in-file', type=str, dest='in_file', required=True, help='Input file with match timeline data in JSON')
+parser.add_argument('-o', '--out-file', type=str, dest='out_file', required=True, help='Output file with match timeline data in CSV')
 args = parser.parse_args()
 
 
 IN_FILE = args.in_file
+OUT_FILE = args.out_file
 
+
+fh_csv = open(OUT_FILE, 'w')
 
 # Print header
-print ",".join([
-		'gameId', 'timestamp', 'participantId', 'level',
-		'totalGold', 'currentGold', 'xp', 'minionsKilled',
-		'jungleMinionsKilled', 'positionX', 'positionY',
-		'championKills', 'assists', 'deaths',
-		'wardsPlaced', 'buildingKills', 'eliteMonsterKills'
-		])
+fh_csv.write(",".join([
+			'gameId', 'timestamp', 'participantId', 'level',
+			'totalGold', 'currentGold', 'xp', 'minionsKilled',
+			'jungleMinionsKilled', 'positionX', 'positionY',
+			'championKills', 'assists', 'deaths',
+			'wardsPlaced', 'buildingKills', 'eliteMonsterKills'
+			]) + "\n")
 
 game_counter = 0	# Temporary until gameId is included
 
-for line in [x.rstrip() for x in open(IN_FILE, 'r')]:
+for line in [x.strip() for x in open(IN_FILE, 'r')]:
 	game_counter += 1
 	
 	json_data = json.loads(line)
@@ -74,27 +78,29 @@ for line in [x.rstrip() for x in open(IN_FILE, 'r')]:
 					elif event["monsterType"] == "BARON_NASHOR":
 						baron_kills[event["killerId"]] += 1
 			
-			print ",".join(str(x)
-					for x in [
-						game_counter,
-						frame["timestamp"],
-						player_data["participantId"],
-						player_data["level"],
-						player_data["totalGold"],
-						player_data["currentGold"],
-						player_data["xp"],
-						player_data["minionsKilled"],
-						player_data["jungleMinionsKilled"],
-						player_data["position"]["x"],
-						player_data["position"]["y"],
-						kills[player],
-						assists[player],
-						deaths[player],
-						wards_placed[player],
-						building_kills[player],
-						monster_kills[player],
-						dragon_kills[player],
-						herald_kills[player],
-						baron_kills[player]
-					])
+			fh_csv.write(",".join(str(x)
+						for x in [
+							game_counter,
+							frame["timestamp"],
+							player_data["participantId"],
+							player_data["level"],
+							player_data["totalGold"],
+							player_data["currentGold"],
+							player_data["xp"],
+							player_data["minionsKilled"],
+							player_data["jungleMinionsKilled"],
+							player_data["position"]["x"],
+							player_data["position"]["y"],
+							kills[player],
+							assists[player],
+							deaths[player],
+							wards_placed[player],
+							building_kills[player],
+							monster_kills[player],
+							dragon_kills[player],
+							herald_kills[player],
+							baron_kills[player]
+						]) + "\n")
+
+fh_csv.close()
 
