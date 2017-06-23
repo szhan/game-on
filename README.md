@@ -25,6 +25,20 @@ e.g.,
 ```
 
 
+## Files
+Running 'fetch_challenger_data.py' should yield four files containing the following types of data:
+1. match endpoints, i.e., victory versus defeat and final performance characteristics of each player (e.g., gold accumulated and total champion kills)
+2. match timelines, i.e., performance characteristics of each player over time (one minute intervals) and event data (e.g., team fights and ward placement)
+3. summoners, i.e., general information about a player's game account (e.g., account id and league points)
+4. matchlist, i.e., match history of each player, as far back as available
+
+e.g., Challenger ranked solo queue 5x5 game data retrieved from the NA1 server...
+	data/challengers-endpoints-NA1-RANKED_SOLO_5x5-2017_06_23.json
+	data/challengers-timelines-NA1-RANKED_SOLO_5x5-2017_06_23.json
+	data/challengers-summoners-NA1-RANKED_SOLO_5x5-2017_06_23.json
+	data/challengers-matchlist-NA1-RANKED_SOLO_5x5-2017_06_23.json
+
+
 ## Notes about DTOs
 Data are packed into JSON strings in a hierarchical manner:
 ```javascript
