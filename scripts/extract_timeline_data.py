@@ -25,12 +25,12 @@ fh_csv.write(",".join([
 			'dragonKills', 'heraldKills', 'baronKills'
 			]) + "\n")
 
-game_counter = 0	# Temporary until gameId is included
+game_id = 0
 
 for line in [x.strip() for x in open(IN_FILE, 'r')]:
-	game_counter += 1
-	
 	json_data = json.loads(line)
+	
+	game_id += 1
 	
 	for frame in json_data["frames"]:
 		for player in range(1, 11):
@@ -81,7 +81,7 @@ for line in [x.strip() for x in open(IN_FILE, 'r')]:
 			
 			fh_csv.write(",".join(str(x)
 						for x in [
-							game_counter,
+							game_id,
 							frame["timestamp"],
 							player_data["participantId"],
 							player_data["level"],
