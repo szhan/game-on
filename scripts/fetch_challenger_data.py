@@ -12,6 +12,7 @@ Basic workflow to get match endpoint data for 20 recent
 3. Get match list for each player by 'account id'
 4. Get match endpoint data for each match by 'match id'
 5. Get also match timeline data for each match by 'match_id', if available
+6. Dump summoner, match list, match endpoint, and match timeline data into separate files
 """
 
 
