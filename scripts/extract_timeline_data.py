@@ -21,7 +21,8 @@ fh_csv.write(",".join([
 			'totalGold', 'currentGold', 'xp', 'minionsKilled',
 			'jungleMinionsKilled', 'positionX', 'positionY',
 			'championKills', 'assists', 'deaths',
-			'wardsPlaced', 'buildingKills', 'eliteMonsterKills'
+			'wardsPlaced', 'buildingKills', 'monsterKills',
+			'dragonKills', 'heraldKills', 'baronKills'
 			]) + "\n")
 
 game_counter = 0	# Temporary until gameId is included
