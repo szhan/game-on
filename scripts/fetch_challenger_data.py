@@ -19,11 +19,13 @@ Basic workflow to get match endpoint data for 20 recent
 parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger ranked solo queue 5x5 games.")
 parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA, BR1, EUN1, KR, and OC1)')
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=50, help='Specify max request per minute (default = 50 sec)')
+parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
 args = parser.parse_args()
 
 
 REGION = args.region
 QUEUE_TYPE = "RANKED_SOLO_5x5"
+NBR_PLAYERS = args.nbr_players
 NBR_GAMES = 20
 
 USER_API_KEY = ct.get_api_key()
@@ -57,7 +59,7 @@ fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
 league_list_dto = json.loads(ct.get_json_data(ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE), sleep_time=SLEEP_TIME))
 
-for league_item_dto in league_list_dto["entries"]:
+for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 	player_id = league_item_dto["playerOrTeamId"]
 	print "INFO: Getting data for player " + player_id
 	
