@@ -55,6 +55,5 @@ e.g.,
 ```
 
 ## TODO list
-1. Store gameId during API calls.
-2. Partition data into one file per game (maybe endpoint and timeline data for the same game together).
+1. Partition data into one file per game (maybe endpoint and timeline data for the same game together).
 
