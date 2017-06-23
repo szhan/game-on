@@ -4,6 +4,25 @@ This repo contains very lightweight wrappers to the Riot Games API. It supports 
 
 It is assumed that a file named 'API_KEY', which contains the user API key, is in the main directory.
 
+
+## Scripts
+1. To download Challenger ranked solo queue 5x5 game data from a specified region.
+```javascript
+usage: fetch_challenger_data.py [-h] -r REGION [-m MAX_REQUESTS_PER_MIN]
+
+e.g.,
+	python scripts/fetch_challenger_data.py -r NA1 -m 40
+```
+
+2. To convert timeline data in JSON to CSV
+```javascript
+usage: extract_timeline_data.py [-h] -i IN_FILE -o OUT_FILE
+
+e.g.,
+	python scripts/extract_timeline_data.py
+```
+
+
 ## Notes about DTOs:
 Data are packed into JSON strings in a hierarchical manner:
 MatchDto
