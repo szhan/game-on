@@ -78,7 +78,7 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 			for event in frame["events"]:
 				if event["type"] == "CHAMPION_KILL":
 					kills[event["killerId"]] += 1
-					kills[event["victimId"]] += 1
+					deaths[event["victimId"]] += 1
 					for i in event["assistingParticipantIds"]:
 						assists[i] += 1
 				elif event["type"] == "WARD_PLACED":
