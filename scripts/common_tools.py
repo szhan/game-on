@@ -1,4 +1,5 @@
 import argparse
+import json
 import math
 import time
 import pycurl
@@ -111,8 +112,13 @@ def get_match_timeline_by_match_id(url_prefix, url_suffix, match_id):
 
 
 def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
-	""" Send request to Riot API server, and handle response, retrying requests up to a specified number of times. """
-	json_data = None
+	""" 
+	Send request to Riot API server, and handle response, retrying requests up to 'max_attempts' times.
+	Decode returned JSON string, and retry if JSON string is invalid up to 'max_attempts' times.
+	"""
+	json_str = None		# Encoded
+	json_data = None	# Decoded
+	
 	nbr_attempts = 0
 	
 	buffer = StringIO()
@@ -125,15 +131,20 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 		
 		""" Retry until successful. Not entirely sure if 0 is really the expected response... """
 		resp_code = c.getinfo(c.RESPONSE_CODE)
+		
 		if resp_code == 200:
 			""" Success! Do something with response body. """
-			json_data = buffer.getvalue()
-			break
+			try:
+				json_str = buffer.getvalue()
+				json_data = json.loads(json_str)
+				break
+			except ValueError as e:
+				print "ERROR: Problematic JSON string... Retry..."
 		elif resp_code == 400:
-			print "ERROR: Bad request with code " + str(resp_code) + "\nSkipping..."
+			print "ERROR: Bad request with code " + str(resp_code) + ". Skipping..."
 			break
 		elif resp_code == 403:
-			print "ERROR: Rate limit exceeded! Check with Riot!"
+			print "ERROR: Rate limit exceeded! Check with Riot! Skipping..."
 			break
 		elif resp_code == 429:
 			"""
@@ -141,11 +152,9 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 			TODO: Figure out if sleep time can be informed by 'Retry-After' in response header.
 			"""
 		elif resp_code in [500, 503]:
-			print "ERROR: Riot API server is down or unable to fulfill request."
-			break
+			print "ERROR: Riot API server is down or unable to fulfill request. Retry..."
 		else:
-			print "ERROR: Unrecognized HTTP response code " + str(resp_code) + ". Skipping..."
-			break
+			print "ERROR: Unrecognized HTTP response code " + str(resp_code) + ". Retry..."
 		
 		nbr_attempts += 1
 		if nbr_attempts >= max_attempts:
@@ -155,6 +164,6 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 	
 	c.close()
 	
-	return json_data
+	return [json_data, json_str]
 
 
