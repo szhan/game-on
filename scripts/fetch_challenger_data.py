@@ -20,7 +20,8 @@ parser.add_argument('-q', '--queue-type', type=str, dest='queue_type', default='
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=40, help='Specify max request per minute (default = 40 sec)')
 parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
 parser.add_argument('-g', '--nbr-games', type=int, dest='nbr_games', default=20, help='Specify number of recent games to get data for (default = 20)')
-parser.add_argument('-o', '--output-dir', type=str, dest='out_dir', default="data/", help="Provide path to output directory (default = data/)")
+parser.add_argument('-o', '--output-dir', type=str, dest='out_dir', default="data/", help='Provide path to output directory (default = data/)')
+parser.add_argument('-d', '--debug', dest='debug', action='store_true', help='Switch on debug mode')
 args = parser.parse_args()
 
 
@@ -28,8 +29,8 @@ REGION = args.region
 QUEUE_TYPE = args.queue_type
 NBR_PLAYERS = args.nbr_players
 NBR_GAMES = args.nbr_games
-DEBUG = True
 OUT_DIR = args.out_dir
+DEBUG = args.debug
 
 MAX_REQUESTS_PER_MIN = args.max_requests_per_min
 SLEEP_TIME = ct.get_sleep_time(MAX_REQUESTS_PER_MIN)
