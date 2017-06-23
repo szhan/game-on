@@ -25,8 +25,9 @@ e.g.,
 ```
 
 
-## Notes about DTOs:
+## Notes about DTOs
 Data are packed into JSON strings in a hierarchical manner:
+```javascript
 MatchDto
 	ParticipantIdentityDto		list[dto]
 		PlayerDto
@@ -37,12 +38,15 @@ MatchDto
 		RuneDto			list[dto]
 		ParticipantTimelineDto
 		MasteryDto		list[dto]
+```
 
+```javascript
 MatchTimelineDto
 	MatchFrameDto			list[dto]
 	MatchParticipantFrameDto	map[int,dto]
 		MatchPositionDto
 	MatchEventDto			list[dto]
+```
 
 "participantFrames",
 e.g.,
@@ -74,7 +78,4 @@ e.g.,
 	"timestamp":1500600
 }
 ```
-
-## TODO list
-1. Partition data into one file per game (maybe endpoint and timeline data for the same game together).
 
