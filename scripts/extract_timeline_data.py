@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 from io import StringIO
 
@@ -41,16 +42,16 @@ for line in [x.strip() for x in open(IN_FILE, 'r')]:
 			# TODO: Figure out what creatorId = 0 means...
 			ini_key = range(0, 11)
 			ini_val = [0] * 11
-			# TODO: Use deepcopy
+			
 			kills = {k:v for k,v in zip(ini_key, ini_val)}
-			assists = {k:v for k,v in zip(ini_key, ini_val)}
-			deaths = {k:v for k,v in zip(ini_key, ini_val)}
-			wards_placed = {k:v for k,v in zip(ini_key, ini_val)}		# TODO: Differentiate ward type, e.g., yellow or pink
-			building_kills = {k:v for k,v in zip(ini_key, ini_val)}		# TODO: Differentiate building type, e.g., turret or inhibitor
-			monster_kills = {k:v for k,v in zip(ini_key, ini_val)}
-			dragon_kills = {k:v for k,v in zip(ini_key, ini_val)}
-			herald_kills = {k:v for k,v in zip(ini_key, ini_val)}
-			baron_kills = {k:v for k,v in zip(ini_key, ini_val)}
+			assists = copy.copy(kills)
+			deaths = copy.copy(kills)
+			wards_placed = copy.copy(kills)
+			building_kills = copy.copy(kills)
+			monster_kills = copy.copy(kills)
+			dragon_kills = copy.copy(kills)
+			herald_kills = copy.copy(kills)
+			baron_kills = copy.copy(kills)
 			
 			for event in frame["events"]:
 				if event["type"] == "CHAMPION_KILL":
