@@ -1,23 +1,21 @@
-import sys
 import json
 import argparse
 import common_tools as ct
 
 
 """
-Basic workflow to get match endpoint data for 20 recent 
-	ranked solo queue matches for all Challenger players in NA.
-1. Get full list of Challenger players
+Basic workflow to get match data for Challenger players.
+1. Get list of Challenger players
 2. Get 'account id' for each player by 'summoner name'
 3. Get match list for each player by 'account id'
 4. Get match endpoint data for each match by 'match id'
 5. Get also match timeline data for each match by 'match_id', if available
-6. Dump summoner, match list, match endpoint, and match timeline data into separate files
+6. Dump summoner, match list, endpoint, and timeline data into separate files
 """
 
 
-parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger ranked solo queue 5x5 games.")
-parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA, BR1, EUN1, KR, and OC1)')
+parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger games.")
+parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA1, BR1, EUN1, KR, and OC1)')
 parser.add_argument('-q', '--queue-type', type=str, dest='queue_type', default='RANKED_SOLO_5x5', help='Specify queue type (default = RANKED_SOLO_5x5)')
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=40, help='Specify max request per minute (default = 40 sec)')
 parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
@@ -32,17 +30,14 @@ NBR_PLAYERS = args.nbr_players
 NBR_GAMES = args.nbr_games
 OUT_DIR = args.out_dir
 
-USER_API_KEY = ct.get_api_key()
-
-# Default rate limit, unless requested
-# 500 requests every 10 minutes
 MAX_REQUESTS_PER_MIN = args.max_requests_per_min
 SLEEP_TIME = ct.get_sleep_time(MAX_REQUESTS_PER_MIN)
 
+USER_API_KEY = ct.get_api_key()
+DATETIME = ct.get_formatted_date()
+
 URL_PREFIX = ct.get_url_prefix(REGION)
 URL_SUFFIX = ct.get_url_suffix(USER_API_KEY)
-
-DATETIME = ct.get_formatted_date()
 
 def get_file_name(data_type):
 	return OUT_DIR + "-".join(["challengers", data_type, REGION, QUEUE_TYPE, DATETIME]) + ".json"
@@ -93,6 +88,7 @@ for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 		queue = match_reference_dto["queue"]
 		
 		# Skip unless RANKED_SOLO_5x5 (queueType=4) or TEAM_BUILDER_RANKED_SOLO (queueType=420)
+		# TODO: Allow for other queue types
 		if queue not in [4, 420]: continue
 		
 		match_dto = ct.get_json_data(ct.get_match_endpoint_by_match_id(URL_PREFIX, URL_SUFFIX, game_id), sleep_time=SLEEP_TIME)
