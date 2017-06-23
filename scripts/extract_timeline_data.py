@@ -37,14 +37,17 @@ for line in [x.rstrip() for x in open(in_file, 'r')]:
 			deaths = {k:v for k,v in zip(ini_key, ini_val)}
 			wards_placed = {k:v for k,v in zip(ini_key, ini_val)}		# TODO: Differentiate ward type, e.g., yellow or pink
 			building_kills = {k:v for k,v in zip(ini_key, ini_val)}		# TODO: Differentiate building type, e.g., turret or inhibitor
-			elite_monster_kills = {k:v for k,v in zip(ini_key, ini_val)}	# TODO: Differentiate monster type, e.g., dragon or baron
+			monster_kills = {k:v for k,v in zip(ini_key, ini_val)}
+			dragon_kills = {k:v for k,v in zip(ini_key, ini_val)}
+			herald_kills = {k:v for k,v in zip(ini_key, ini_val)}
+			baron_kills = {k:v for k,v in zip(ini_key, ini_val)}
 			
 			for event in frame["events"]:
 				if event["type"] == "CHAMPION_KILL":
 					kills[event["killerId"]] += 1
 					kills[event["victimId"]] += 1
 					for i in event["assistingParticipantIds"]:
-						kills[i] += 1
+						assists[i] += 1
 				elif event["type"] == "WARD_PLACED":
 					wards_placed[event["creatorId"]] += 1
 				elif event["type"] == "BUILDING_KILL":
@@ -54,7 +57,14 @@ for line in [x.rstrip() for x in open(in_file, 'r')]:
 						building_kills[i] += 1
 				elif event["type"] == "ELITE_MONSTER_KILL":
 					# TODO: Add participants?
-					elite_monster_kills[event["killerId"]] += 1
+					monster_kills[event["killerId"]] += 1
+					
+					if event["monsterType"] == "DRAGON":
+						dragon_kills[event["killerId"]] += 1
+					elif event["monsterType"] == "RIFTHERALD":
+						herald_kills[event["killerId"]] += 1
+					elif event["monsterType"] == "BARON_NASHOR":
+						baron_kills[event["killerId"]] += 1
 			
 			print ",".join(str(x)
 					for x in [
@@ -74,6 +84,9 @@ for line in [x.rstrip() for x in open(in_file, 'r')]:
 						deaths[player],
 						wards_placed[player],
 						building_kills[player],
-						elite_monster_kills[player]
+						monster_kills[player],
+						dragon_kills[player],
+						herald_kills[player],
+						baron_kills[player]
 					])
 
