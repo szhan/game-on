@@ -18,6 +18,7 @@ Basic workflow to get match endpoint data for 20 recent
 
 parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger ranked solo queue 5x5 games.")
 parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA, BR1, EUN1, KR, and OC1)')
+parser.add_argument('-q', '--queue-type', type=str, dest='queue_type', help='Specify queue type (default = RANKED_SOLO_5x5)')
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=50, help='Specify max request per minute (default = 50 sec)')
 parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
 parser.add_argument('-g', '--nbr-games', type=int, dest='nbr_games', default=20, help='Specify number of recent games to get data for (default = 20)')
@@ -25,7 +26,7 @@ args = parser.parse_args()
 
 
 REGION = args.region
-QUEUE_TYPE = "RANKED_SOLO_5x5"
+QUEUE_TYPE = args.queue_type
 NBR_PLAYERS = args.nbr_players
 NBR_GAMES = args.nbr_games
 
