@@ -18,7 +18,7 @@ Basic workflow to get match endpoint data for 20 recent
 
 parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger ranked solo queue 5x5 games.")
 parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA, BR1, EUN1, KR, and OC1)')
-parser.add_argument('-q', '--queue-type', type=str, dest='queue_type', help='Specify queue type (default = RANKED_SOLO_5x5)')
+parser.add_argument('-q', '--queue-type', type=str, dest='queue_type', default='RANKED_SOLO_5x5', help='Specify queue type (default = RANKED_SOLO_5x5)')
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=40, help='Specify max request per minute (default = 40 sec)')
 parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
 parser.add_argument('-g', '--nbr-games', type=int, dest='nbr_games', default=20, help='Specify number of recent games to get data for (default = 20)')
@@ -59,7 +59,8 @@ fh_endpoints = open(OUT_FILE_ENDPOINTS, 'w')
 fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
 
-league_list_dto = json.loads(ct.get_json_data(ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE), sleep_time=SLEEP_TIME))
+cmd_get_league_list_dto = ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
+league_list_dto = json.loads(ct.get_json_data(cmd_get_league_list_dto, sleep_time=SLEEP_TIME))
 
 for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 	player_id = league_item_dto["playerOrTeamId"]
