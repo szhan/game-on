@@ -1,7 +1,15 @@
+import argparse
 import json
 from io import StringIO
 
-in_file = "data/challengers-timelines-kr-RANKED_SOLO_5x5-2017_06_18.json"
+
+parser = argparse.ArgumentParser(description="Extract timeline data from a JSON file and dump into a CSV file.")
+parser.add_argument('-i', '--in-file', type=str, dest='in_file', required=True, help='Input file with match timeline data in JSON')
+args = parser.parse_args()
+
+
+IN_FILE = args.in_file
+
 
 # Print header
 print ",".join([
@@ -14,7 +22,7 @@ print ",".join([
 
 game_counter = 0	# Temporary until gameId is included
 
-for line in [x.rstrip() for x in open(in_file, 'r')]:
+for line in [x.rstrip() for x in open(IN_FILE, 'r')]:
 	game_counter += 1
 	
 	json_data = json.loads(line)
