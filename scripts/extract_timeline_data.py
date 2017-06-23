@@ -16,7 +16,7 @@ IN_ENDPOINT_FILE = args.in_endpoint_file
 OUT_FILE = args.out_file
 
 
-ENDPOINT_DATA = {}	# Account id
+ACCOUNT_DATA = {}	# Account id
 TEAM_DATA = {}		# Team id
 DURATION_DATA = {}	# Game duration, "gameDuration" in MatchDto
 OUTCOME_DATA = {}	# Win, "win" in TeamStatsDto
@@ -54,7 +54,7 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		win = team["win"]
 		team_outcome_map[team_id] = win
 	
-	ENDPOINT_DATA[game_id] = participant_account_map
+	ACCOUNT_DATA[game_id] = participant_account_map
 	TEAM_DATA[game_id] = participant_team_map
 	DURATION_DATA[game_id] = json_data["gameDuration"]
 	OUTCOME_DATA[game_id] = team_outcome_map
@@ -78,7 +78,7 @@ fh_csv.write(",".join([
 for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 	[game_id, json_str] = line.split("\t")
 	json_data = json.loads(json_str)
-	endpoint_data = ENDPOINT_DATA[game_id]
+	endpoint_data = ACCOUNT_DATA[game_id]
 	team_data = TEAM_DATA[game_id]
 	duration_data = DURATION_DATA[game_id]
 	outcome_data = OUTCOME_DATA[game_id]
