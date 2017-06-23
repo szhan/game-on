@@ -63,7 +63,7 @@ MatchTimelineDto
 	MatchEventDto			list[dto]
 ```
 
-"participantFrames",
+MatchTimelineDto contains a list of MatchParticipantFrameDto ("participantFrames"),
 e.g.,
 ```javascript
 {
