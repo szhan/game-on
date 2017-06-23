@@ -25,12 +25,9 @@ fh_csv.write(",".join([
 			'dragonKills', 'heraldKills', 'baronKills'
 			]) + "\n")
 
-game_id = 0
-
 for line in [x.strip() for x in open(IN_FILE, 'r')]:
-	json_data = json.loads(line)
-	
-	game_id += 1
+	[game_id, json_str] = line.split("\t")
+	json_data = json.loads(json_str)
 	
 	for frame in json_data["frames"]:
 		for player in range(1, 11):
