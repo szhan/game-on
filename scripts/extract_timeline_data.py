@@ -51,59 +51,65 @@ fh_csv.write(",".join([
 for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 	[game_id, json_str] = line.split("\t")
 	json_data = json.loads(json_str)
+	endpoint_data = ENDPOINT_DATA[game_id]
 	
 	for frame in json_data["frames"]:
+		# Parse event data in dict, where key is participant id and value is count
+		# TODO: Figure out what creatorId = 0 means...
+		ini_key = range(0, 11)
+		ini_val = [0] * 11
+		
+		kills = {k:v for k,v in zip(ini_key, ini_val)}
+		assists = copy.copy(kills)
+		deaths = copy.copy(kills)
+		wards_placed = copy.copy(kills)
+		building_kills = copy.copy(kills)
+		monster_kills = copy.copy(kills)
+		dragon_kills = copy.copy(kills)
+		herald_kills = copy.copy(kills)
+		baron_kills = copy.copy(kills)
+		
+		for event in frame["events"]:
+			if event["type"] == "CHAMPION_KILL":
+				kills[event["killerId"]] += 1
+				deaths[event["victimId"]] += 1
+				
+				for i in event["assistingParticipantIds"]:
+					assists[i] += 1
+			elif event["type"] == "WARD_PLACED":
+				wards_placed[event["creatorId"]] += 1
+			elif event["type"] == "BUILDING_KILL":
+				building_kills[event["killerId"]] += 1
+				
+				# TODO: Check if this can be missing
+				for i in event["assistingParticipantIds"]:
+					building_kills[i] += 1
+			elif event["type"] == "ELITE_MONSTER_KILL":
+				# TODO: Add participants?
+				monster_kills[event["killerId"]] += 1
+				
+				if event["monsterType"] == "DRAGON":
+					dragon_kills[event["killerId"]] += 1
+				elif event["monsterType"] == "RIFTHERALD":
+					herald_kills[event["killerId"]] += 1
+				elif event["monsterType"] == "BARON_NASHOR":
+					baron_kills[event["killerId"]] += 1
+		
+		# Print game statistcs for each player in this frame interval
 		for player in range(1, 11):
 			player_data = frame["participantFrames"][str(player)]
+			player_id = player_data["participantId"]	# Should be equal to 'player'
 			
-			# Position data missing in last frame (CHECK)
+			# Position data missing in last frame
+			# TODO: Check if this is true...
 			if "position" not in player_data.keys():
 				player_data["position"] = {"y": "NA", "x": "NA"}
-			
-			# Parse event data in dict, where key is participant id and value is count
-			# TODO: Figure out what creatorId = 0 means...
-			ini_key = range(0, 11)
-			ini_val = [0] * 11
-			
-			kills = {k:v for k,v in zip(ini_key, ini_val)}
-			assists = copy.copy(kills)
-			deaths = copy.copy(kills)
-			wards_placed = copy.copy(kills)
-			building_kills = copy.copy(kills)
-			monster_kills = copy.copy(kills)
-			dragon_kills = copy.copy(kills)
-			herald_kills = copy.copy(kills)
-			baron_kills = copy.copy(kills)
-			
-			for event in frame["events"]:
-				if event["type"] == "CHAMPION_KILL":
-					kills[event["killerId"]] += 1
-					deaths[event["victimId"]] += 1
-					for i in event["assistingParticipantIds"]:
-						assists[i] += 1
-				elif event["type"] == "WARD_PLACED":
-					wards_placed[event["creatorId"]] += 1
-				elif event["type"] == "BUILDING_KILL":
-					building_kills[event["killerId"]] += 1
-					# TODO: Check if this can be missing
-					for i in event["assistingParticipantIds"]:
-						building_kills[i] += 1
-				elif event["type"] == "ELITE_MONSTER_KILL":
-					# TODO: Add participants?
-					monster_kills[event["killerId"]] += 1
-					
-					if event["monsterType"] == "DRAGON":
-						dragon_kills[event["killerId"]] += 1
-					elif event["monsterType"] == "RIFTHERALD":
-						herald_kills[event["killerId"]] += 1
-					elif event["monsterType"] == "BARON_NASHOR":
-						baron_kills[event["killerId"]] += 1
 			
 			fh_csv.write(",".join(str(x)
 						for x in [
 							game_id,
 							frame["timestamp"],
-							player_data["participantId"],
+							endpoint_data[player_id],	# account id
 							player_data["level"],
 							player_data["totalGold"],
 							player_data["currentGold"],
@@ -112,15 +118,15 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 							player_data["jungleMinionsKilled"],
 							player_data["position"]["x"],
 							player_data["position"]["y"],
-							kills[player],
-							assists[player],
-							deaths[player],
-							wards_placed[player],
-							building_kills[player],
-							monster_kills[player],
-							dragon_kills[player],
-							herald_kills[player],
-							baron_kills[player]
+							kills[player_id],
+							assists[player_id],
+							deaths[player_id],
+							wards_placed[player_id],
+							building_kills[player_id],
+							monster_kills[player_id],
+							dragon_kills[player_id],
+							herald_kills[player_id],
+							baron_kills[player_id]
 						]) + "\n")
 
 fh_csv.close()
