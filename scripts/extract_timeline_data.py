@@ -17,22 +17,36 @@ OUT_FILE = args.out_file
 
 
 ENDPOINT_DATA = {}
+TEAM_DATA = {}
+
 for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 'r')]:
 	"""
 	Participant ids (ranging from 1 to 10) are used in match timeline data 
 	instead of account id (unique player identifiers outside each game).
-	Extract from the corresponding match endpoint data to find the mapping
-	between in-game participant ids and account ids.
-	"""
-	participant_account_map = {}
 	
-	list_participant_identity_dto = json.loads(json_str)["participantIdentities"]
+	Extract from the corresponding match endpoint data to find the mapping
+	between in-game participant ids and account ids and also team ids.
+	"""
+	
+	json_data = json.loads(json_str)
+	participant_account_map = {}	# Map participant id to account id
+	participant_team_map = {}	# Map participant id to team id
+	
+	list_participant_identity_dto = json_data["participantIdentities"]
 	for participant in list_participant_identity_dto:
-		participant_id = participant["participantId"]	# In-game id
+		participant_id = participant["participantId"]
 		account_id = participant["player"]["accountId"]
 		participant_account_map[participant_id] = account_id
 	
 	ENDPOINT_DATA[game_id] = participant_account_map
+	
+	list_participant_dto = json_data["participants"]
+	for participant in list_participant_dto:
+		participant_id = participant["participantId"]
+		team_id = participant["teamId"]
+		participant_team_map[participant_id] = team_id
+	
+	TEAM_DATA[game_id] = participant_team_map
 
 
 fh_csv = open(OUT_FILE, 'w')
@@ -40,9 +54,10 @@ fh_csv = open(OUT_FILE, 'w')
 
 # Print header
 fh_csv.write(",".join([
-			'gameId', 'timestamp', 'participantId', 'level',
-			'totalGold', 'currentGold', 'xp', 'minionsKilled',
-			'jungleMinionsKilled', 'positionX', 'positionY',
+			'gameId', 'timestamp', 'accountId', 'teamId', 
+			'totalGold', 'currentGold', 'level', 'xp',
+			'minionsKilled', 'jungleMinionsKilled',
+			'positionX', 'positionY',
 			'championKills', 'assists', 'deaths',
 			'wardsPlaced', 'buildingKills', 'monsterKills',
 			'dragonKills', 'heraldKills', 'baronKills'
@@ -52,6 +67,7 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 	[game_id, json_str] = line.split("\t")
 	json_data = json.loads(json_str)
 	endpoint_data = ENDPOINT_DATA[game_id]
+	team_data = TEAM_DATA[game_id]
 	
 	for frame in json_data["frames"]:
 		# Parse event data in dict, where key is participant id and value is count
@@ -110,9 +126,10 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 							game_id,
 							frame["timestamp"],
 							endpoint_data[player_id],	# account id
-							player_data["level"],
+							team_data[player_id],		# team id
 							player_data["totalGold"],
 							player_data["currentGold"],
+							player_data["level"],
 							player_data["xp"],
 							player_data["minionsKilled"],
 							player_data["jungleMinionsKilled"],
