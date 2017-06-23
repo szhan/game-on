@@ -5,16 +5,38 @@ from io import StringIO
 
 
 parser = argparse.ArgumentParser(description="Extract timeline data from a JSON file and dump into a CSV file.")
-parser.add_argument('-i', '--in-file', type=str, dest='in_file', required=True, help='Input file with match timeline data in JSON')
+parser.add_argument('-i', '--in-timeline-file', type=str, dest='in_timeline_file', required=True, help='Input file with match timeline data in JSON')
+parser.add_argument('-e', '--in-endpoint-file', type=str, dest='in_endpoint_file', required=True, help='Input file with match endpoint data in JSON')
 parser.add_argument('-o', '--out-file', type=str, dest='out_file', required=True, help='Output file with match timeline data in CSV')
 args = parser.parse_args()
 
 
-IN_FILE = args.in_file
+IN_TIMELINE_FILE = args.in_timeline_file
+IN_ENDPOINT_FILE = args.in_endpoint_file
 OUT_FILE = args.out_file
 
 
+ENDPOINT_DATA = {}
+for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 'r')]:
+	"""
+	Participant ids (ranging from 1 to 10) are used in match timeline data 
+	instead of account id (unique player identifiers outside each game).
+	Extract from the corresponding match endpoint data to find the mapping
+	between in-game participant ids and account ids.
+	"""
+	participant_account_map = {}
+	
+	list_participant_identity_dto = json.loads(json_str)["participantIdentities"]
+	for participant in list_participant_identity_dto:
+		participant_id = participant["participantId"]	# In-game id
+		account_id = participant["player"]["accountId"]
+		participant_account_map[participant_id] = account_id
+	
+	ENDPOINT_DATA[game_id] = participant_account_map
+
+
 fh_csv = open(OUT_FILE, 'w')
+
 
 # Print header
 fh_csv.write(",".join([
@@ -26,7 +48,7 @@ fh_csv.write(",".join([
 			'dragonKills', 'heraldKills', 'baronKills'
 			]) + "\n")
 
-for line in [x.strip() for x in open(IN_FILE, 'r')]:
+for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 	[game_id, json_str] = line.split("\t")
 	json_data = json.loads(json_str)
 	
