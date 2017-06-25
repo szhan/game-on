@@ -49,7 +49,7 @@ URL_PREFIX = ct.get_url_prefix(REGION)
 URL_SUFFIX = ct.get_url_suffix(USER_API_KEY)
 
 def get_file_name(data_type):
-	return OUT_DIR + "-".join(["challengers", data_type, REGION, QUEUE_TYPE, DATETIME]) + ".json"
+	return OUT_DIR + "-".join([LEAGUE, data_type, REGION, QUEUE_TYPE, DATETIME]) + ".json"
 
 
 OUT_FILE_SUMMONERS = get_file_name("summoners")
