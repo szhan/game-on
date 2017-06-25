@@ -7,6 +7,19 @@ from datetime import date
 from StringIO import StringIO
 
 
+""" Game constants """
+VALID_REGION_NAMES = [	'BR1', 'EUN1', 'EUW1',
+			'JP1', 'KR', 'LA1',
+			'LA2', 'NA1', 'OC1',
+			'TR1', 'RU', 'PBE1'
+			]
+
+VALID_QUEUE_TYPES = [	'RANKED_SOLO_5x5',		# queueType = 4
+			'TEAM_BUILDER_RANKED_SOLO',	# queueType = 420
+			'RANKED_TEAM_5x5'		# queueType = 42
+			]
+
+
 """ Simple utilities """
 def get_api_key ():
 	""" The file containing the API key is assumed to be in the main directory. """
@@ -21,29 +34,20 @@ def get_api_key ():
 
 def check_region_name(region_name):
 	""" Check if region name is valid. """
-	valid_region_names = [	'BR1', 'EUN1', 'EUW1',
-				'JP1', 'KR', 'LA1',
-				'LA2', 'NA1', 'OC1',
-				'TR1', 'RU', 'PBE1'
-				]
-	
-	if region_name not in valid_region_names:
-		msg = "ERROR: Region name is invalid!"
-		raise argparse.ArgumentTypeError(msg)
+	if region_name not in VALID_REGION_NAMES:
+		msg1 = "ERROR: Region name is invalid!\n"
+		msg2 = "ERROR: Use one of the following values: " + ", ".join(VALID_REGION_NAMES)
+		raise argparse.ArgumentTypeError(msg1 + msg2)
 	else:
 		return region_name
 
 
 def check_queue_type(queue_type):
 	""" Check if queue type is valid. """
-	valid_queue_types = [	'RANKED_SOLO_5x5',		# queueType = 4
-				'TEAM_BUILDER_RANKED_SOLO',	# queueType = 420
-				'RANKED_TEAM_5x5'		# queueType = 42
-				]
-	
-	if queue_type not in valid_queue_types:
-		msg = "ERROR: Queue type is invalid!"
-		raise argparse.ArgumentTypeError(msg)
+	if queue_type not in VALID_QUEUE_TYPES:
+		msg1 = "ERROR: Queue type is invalid!\n"
+		msg2 = "ERROR: Use one of the following values: " + ", ".join(VALID_QUEUE_TYPES)
+		raise argparse.ArgumentTypeError(msg1 + msg2)
 	else:
 		return queue_type
 
