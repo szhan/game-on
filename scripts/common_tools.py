@@ -36,14 +36,14 @@ def check_region_name(region_name):
 
 def check_queue_type(queue_type):
 	""" Check if queue type is valid. """
-	valid_queue_types = [	'RANKED_SOLO_5x5',		# 4
-				'TEAM_BUILDER_RANKED_SOLO',	# 420
-				'RANKED_TEAM_5x5'		# 42
+	valid_queue_types = [	'RANKED_SOLO_5x5',		# queueType = 4
+				'TEAM_BUILDER_RANKED_SOLO',	# queueType = 420
+				'RANKED_TEAM_5x5'		# queueType = 42
 				]
 	
 	if queue_type not in valid_queue_types:
 		msg = "ERROR: Queue type is invalid!"
-		raise argparse.ArgumentErrorType(msg)
+		raise argparse.ArgumentTypeError(msg)
 	else:
 		return queue_type
 
