@@ -28,9 +28,9 @@ e.g.,
 
 
 ## Files
-Running 'fetch_challenger_data.py' should yield four files containing the following types of data:
-1. match endpoints, i.e., victory versus defeat and final performance characteristics of each player (e.g., gold accumulated and total champion kills)
-2. match timelines, i.e., performance characteristics of each player over time (one minute intervals) and event data (e.g., team fights and ward placement)
+Running 'fetch_ranked_game_data.py' should yield four files containing the following types of data:
+1. endpoints, i.e., victory versus defeat and final performance characteristics of each player (e.g., gold accumulated and total champion kills)
+2. timelines, i.e., performance characteristics of each player over time (one minute intervals in epoch time) and event data (e.g., team fights and ward placement)
 3. summoners, i.e., general information about a player's game account (e.g., account id and league points)
 4. matchlist, i.e., match history of each player, as far back as available
 ```javascript
