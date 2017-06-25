@@ -16,7 +16,7 @@ Basic workflow to get match data for Challenger players.
 
 parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger games.")
 parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA1, BR1, EUN1, KR, and OC1)')
-parser.add_argument('-q', '--queue-type', type=str, dest='queue_type', default='RANKED_SOLO_5x5', help='Specify queue type (default = RANKED_SOLO_5x5)')
+parser.add_argument('-q', '--queue-type', type=ct.check_queue_type, dest='queue_type', default='RANKED_SOLO_5x5', help='Specify queue type (default = RANKED_SOLO_5x5)')
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=40, help='Specify max request per minute (default = 40 sec)')
 parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
 parser.add_argument('-g', '--nbr-games', type=int, dest='nbr_games', default=20, help='Specify number of recent games to get data for (default = 20)')
@@ -59,7 +59,13 @@ fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
 
 cmd_get_league_list_dto = ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
+if DEBUG: print "DEBUG: " + cmd_get_league_list_dto
+
 [league_list_dto, league_list_str] = ct.get_json_data(cmd_get_league_list_dto, sleep_time=SLEEP_TIME)
+if league_list_dto is None:
+	msg = "ERROR: League list not available by given query parameters. Exiting..."
+	raise SystemExit(msg)
+
 
 for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 	player_id = league_item_dto["playerOrTeamId"]
@@ -97,9 +103,12 @@ for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 		game_id = match_reference_dto["gameId"]
 		queue = match_reference_dto["queue"]
 		
-		# Skip unless RANKED_SOLO_5x5 (queueType=4) or TEAM_BUILDER_RANKED_SOLO (queueType=420)
-		# TODO: Allow for other queue types
-		if queue not in [4, 420]: continue
+		"""
+		Skip unless 	RANKED_SOLO_5x5 (queueType=4) or 
+				TEAM_BUILDER_RANKED_SOLO (queueType=420) or
+				RANKED_TEAM_5x5 (queueType=42)
+		"""
+		if queue not in [4, 420, 42]: continue
 		
 		cmd_get_match_dto = ct.get_match_endpoint_by_match_id(URL_PREFIX, URL_SUFFIX, game_id)
 		if DEBUG: print "DEBUG: " + cmd_get_match_dto
