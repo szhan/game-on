@@ -160,9 +160,13 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 		if nbr_attempts >= max_attempts:
 			break
 		
+		# Sleep before next attempt
 		time.sleep(sleep_time)
 	
 	c.close()
+	
+	# Sleep before next API call
+	time.sleep(sleep_time)
 	
 	return [json_data, json_str]
 
