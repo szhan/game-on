@@ -4,8 +4,8 @@ import common_tools as ct
 
 
 """
-Basic workflow to get match data for Challenger players.
-1. Get list of Challenger players
+Basic workflow to get match data:
+1. Get list of Challenger/Master players
 2. Get 'account id' for each player by 'summoner name'
 3. Get match list for each player by 'account id'
 4. Get match endpoint data for each match by 'match id'
@@ -14,7 +14,8 @@ Basic workflow to get match data for Challenger players.
 """
 
 
-parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger games.")
+parser = argparse.ArgumentParser(description="Fetch match data using Riot API for Challenger/Master games.")
+parser.add_argument('-l', '--league', type=ct.check_league_name, dest='league', default='CHALLENGER', help='Specify league to get data for (default = CHALLENGER)' )
 parser.add_argument('-r', '--region', type=ct.check_region_name, dest='region', required=True, help='Specify region (e.g., NA1, BR1, EUN1, KR, and OC1)')
 parser.add_argument('-q', '--queue-type', type=ct.check_queue_type, dest='queue_type', default='RANKED_SOLO_5x5', help='Specify queue type (default = RANKED_SOLO_5x5)')
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=40, help='Specify max request per minute (default = 40 sec)')
@@ -26,6 +27,7 @@ parser.add_argument('-d', '--debug', dest='debug', action='store_true', help='Sw
 args = parser.parse_args()
 
 
+LEAGUE = args.league
 REGION = args.region
 QUEUE_TYPE = args.queue_type
 NBR_PLAYERS = args.nbr_players
@@ -65,9 +67,14 @@ fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 games_retrieved = set()
 
 
-""" Retrieve list of current Challenger players. """
-cmd_get_league_list_dto = ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
+""" Retrieve list of current players in specified league. """
+cmd_get_league_list_dto = ""
+if LEAGUE == "CHALLENGER":
+	cmd_get_league_list_dto = ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
+elif LEAGUE == "MASTER":
+	cmd_get_league_list_dto = ct.get_masters_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
 if DEBUG: print "DEBUG: " + cmd_get_league_list_dto
+
 
 [league_list_dto, league_list_str] = ct.get_json_data(cmd_get_league_list_dto, sleep_time=SLEEP_TIME)
 if league_list_dto is None:
