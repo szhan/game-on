@@ -6,14 +6,14 @@ It is assumed that a file named 'API_KEY', which contains the user API key, is i
 
 
 ## Scripts
-1. To download Challenger ranked game data from a specified region.
+1. To download ranked game data for a specified league from a specified region.
 ```javascript
-usage: fetch_challenger_data.py [-h] -r REGION [-q QUEUE_TYPE]
+usage: fetch_ranked_game_data.py  [-h] [-l LEAGUE] -r REGION [-q QUEUE_TYPE]
 				[-m MAX_REQUESTS_PER_MIN] [-n NBR_PLAYERS]
 				[-g NBR_GAMES] [-o OUT_DIR] [-t TIME_GAP] [-d]
 
 e.g.,
-	python scripts/fetch_challenger_data.py -r NA1 -n 20 -g 20
+	python scripts/fetch_ranked_game_data.py -l CHALLENGER -r NA1 -n 20 -g 20
 ```
 
 2. To convert timeline data in JSON to CSV
