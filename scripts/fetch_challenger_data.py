@@ -36,6 +36,9 @@ DEBUG = args.debug
 
 MAX_REQUESTS_PER_MIN = args.max_requests_per_min
 SLEEP_TIME = ct.get_sleep_time(MAX_REQUESTS_PER_MIN, time_gap=TIME_GAP)
+if DEBUG:
+	print "DEBUG: max requests per min is " + str(MAX_REQUESTS_PER_MIN)
+	print "DEBUG: sleep time is " + str(SLEEP_TIME)
 
 USER_API_KEY = ct.get_api_key()
 DATETIME = ct.get_formatted_date()
