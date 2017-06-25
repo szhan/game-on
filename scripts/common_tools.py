@@ -189,3 +189,12 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 	return [json_data, json_str]
 
 
+""" Display game constants """
+if __name__ == "__main__":
+	print "List of valid region names:"
+	print "\n".join(VALID_REGION_NAMES) + "\n"
+	
+	print "List of valid queue types:"
+	print "\n".join(VALID_QUEUE_TYPES) + "\n"
+
+
