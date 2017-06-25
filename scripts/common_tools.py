@@ -8,6 +8,10 @@ from StringIO import StringIO
 
 
 """ Game constants """
+VALID_LEAGUE_NAMES = [	'CHALLENGER',
+			'MASTER'
+			]
+
 VALID_REGION_NAMES = [	'BR1', 'EUN1', 'EUW1',
 			'JP1', 'KR', 'LA1',
 			'LA2', 'NA1', 'OC1',
@@ -30,6 +34,16 @@ def get_api_key ():
 		key = file.read().rstrip()
 	
 	return key
+
+
+def check_league_name(league_name):
+	""" Check if league name is valid. """
+	if league_name not in VALID_LEAGUE_NAMES:
+		msg1 = "ERROR: League name is invalid!\n"
+		msg2 = "ERROR: Use one of the following values: " + ", ".join(VALID_LEAGUE_NAME)
+		raise ArgumentTypeError(msg1 + msg2)
+	else:
+		return league_name
 
 
 def check_region_name(region_name):
@@ -191,6 +205,11 @@ def get_json_data(api_cmd, max_attempts=5, sleep_time=3):
 
 """ Display game constants """
 if __name__ == "__main__":
+	print "The following game constants are supported:\n"
+	
+	print "List of valid league names:"
+	print "\n".join(VALID_LEAGUE_NAMES) + "\n"
+	
 	print "List of valid region names:"
 	print "\n".join(VALID_REGION_NAMES) + "\n"
 	
