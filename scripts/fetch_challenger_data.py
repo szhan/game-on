@@ -61,10 +61,11 @@ fh_endpoints = open(OUT_FILE_ENDPOINTS, 'w')
 fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
 
-# Keep track of ids of games for which data are already obtained in order to avoid getting duplicate data.
+""" Keep track of ids of games for which data are already obtained in order to avoid getting duplicate data. """
 games_retrieved = set()
 
 
+""" Retrieve list of current Challenger players. """
 cmd_get_league_list_dto = ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
 if DEBUG: print "DEBUG: " + cmd_get_league_list_dto
 
@@ -107,7 +108,7 @@ for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 	
 	""" Get match endpoint and timeline data for NBR_GAMES games. """
 	for match_reference_dto in matches[:NBR_GAMES]:
-		# Retrieve game data only if not yet retrieved
+		""" Retrieve game data only if not yet retrieved. """
 		game_id = match_reference_dto["gameId"]
 		if game_id in games_retrieved: continue
 		
