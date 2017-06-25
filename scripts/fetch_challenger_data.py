@@ -61,6 +61,10 @@ fh_endpoints = open(OUT_FILE_ENDPOINTS, 'w')
 fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
 
+# Keep track of ids of games for which data are already obtained in order to avoid getting duplicate data.
+games_retrieved = set()
+
+
 cmd_get_league_list_dto = ct.get_challengers_by_queue(URL_PREFIX, URL_SUFFIX, QUEUE_TYPE)
 if DEBUG: print "DEBUG: " + cmd_get_league_list_dto
 
@@ -103,14 +107,17 @@ for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 	
 	""" Get match endpoint and timeline data for NBR_GAMES games. """
 	for match_reference_dto in matches[:NBR_GAMES]:
+		# Retrieve game data only if not yet retrieved
 		game_id = match_reference_dto["gameId"]
-		queue = match_reference_dto["queue"]
+		if game_id in games_retrieved: continue
 		
 		"""
-		Skip unless 	RANKED_SOLO_5x5 (queueType=4) or 
-				TEAM_BUILDER_RANKED_SOLO (queueType=420) or
-				RANKED_TEAM_5x5 (queueType=42)
+		Skip game unless it belongs to supported queue types:
+		1. RANKED_SOLO_5x5 (queueType=4) or 
+		2. TEAM_BUILDER_RANKED_SOLO (queueType=420) or
+		3. RANKED_TEAM_5x5 (queueType=42)
 		"""
+		queue = match_reference_dto["queue"]
 		if queue not in [4, 420, 42]: continue
 		
 		cmd_get_match_dto = ct.get_match_endpoint_by_match_id(URL_PREFIX, URL_SUFFIX, game_id)
@@ -124,7 +131,9 @@ for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 		if match_dto is not None and match_timeline_dto is not None:
 			fh_endpoints.write(str(game_id) + "\t" + match_str + "\n")
 			fh_timelines.write(str(game_id) + "\t" + match_timeline_str + "\n")
-	
+			games_retrieved.add(game_id)
+		
+
 
 fh_summoners.close()
 fh_matchlist.close()
