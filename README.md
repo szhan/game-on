@@ -7,7 +7,7 @@ It is assumed that a file named 'API_KEY', which contains the user API key, is i
 
 ## Scripts
 1. To download ranked game data for a specified league from a specified region.
-```javascript
+```
 usage: fetch_ranked_game_data.py  [-h] [-l LEAGUE] -r REGION [-q QUEUE_TYPE]
 				[-m MAX_REQUESTS_PER_MIN] [-n NBR_PLAYERS]
 				[-g NBR_GAMES] [-o OUT_DIR] [-t TIME_GAP] [-d]
@@ -17,7 +17,7 @@ e.g.,
 ```
 
 2. To convert timeline data in JSON to CSV
-```javascript
+```
 usage: extract_timeline_data.py [-h] -i IN_TIMELINE_FILE -e IN_ENDPOINT_FILE -o OUT_FILE
 
 e.g.,
@@ -34,7 +34,7 @@ Running 'fetch_ranked_game_data.py' should yield four files containing the follo
 2. timelines, i.e., performance characteristics of each player over time (one minute intervals in epoch time) and event data (e.g., team fights and ward placement)
 3. summoners, i.e., general information about a player's game account (e.g., account id and league points)
 4. matchlist, i.e., match history of each player, as far back as available
-```javascript
+```
 e.g., Challenger ranked solo queue 5x5 game data retrieved from the NA1 server...
 	data/challengers-endpoints-NA1-RANKED_SOLO_5x5-2017_06_23.json
 	data/challengers-timelines-NA1-RANKED_SOLO_5x5-2017_06_23.json
@@ -74,7 +74,7 @@ The CSV files generated using 'extract_timeline_data.py' assembles timeline data
 
 ## Notes about DTOs
 Data are packed into JSON strings in a hierarchical manner:
-```javascript
+```
 MatchDto
 	ParticipantIdentityDto		list[dto]
 		PlayerDto
@@ -97,7 +97,7 @@ MatchTimelineDto
 
 MatchTimelineDto contains a list of MatchParticipantFrameDto ("participantFrames"),
 e.g.,
-```javascript
+```
 {
 "participantFrames":
 	{
