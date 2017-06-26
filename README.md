@@ -28,6 +28,7 @@ e.g.,
 
 
 ## Files
+### Description of the JSON files
 Running 'fetch_ranked_game_data.py' should yield four files containing the following types of data:
 1. endpoints, i.e., victory versus defeat and final performance characteristics of each player (e.g., gold accumulated and total champion kills)
 2. timelines, i.e., performance characteristics of each player over time (one minute intervals in epoch time) and event data (e.g., team fights and ward placement)
@@ -40,6 +41,33 @@ e.g., Challenger ranked solo queue 5x5 game data retrieved from the NA1 server..
 	data/challengers-summoners-NA1-RANKED_SOLO_5x5-2017_06_23.json
 	data/challengers-matchlist-NA1-RANKED_SOLO_5x5-2017_06_23.json
 ```
+
+
+### Description of the CSV files
+The CSV files generated using 'extract_timeline_data.py' assembles timeline data from a bunch of matches. The files contain the following fields:
+1. gameId - unique match id
+2. gameDuration - length of the match in epoch time (~60,000 units are equal to one minute)
+3. timestamp - epoch time of the end of the time interval
+4. accountId - unique player id
+5. teamId - 100 or 200
+6. win - game outcome (Win or Fail)
+7. totalGold - total gold accumulated of the player by the end of the interval (EOI)
+8. currentGold - current available (unspent) gold of the player by EOI
+9. level - champion level of the player by EOI
+10. xp - total experience gained of the player by EOI
+11. minionsKilled - regular minions killed by the player by EOI
+12. jungleMinionsKilled - jungle minions killed by the player by EOI
+13. positionX - player's horizontal coordinate on Summoner's Rift (from 0 to 14820) by EOI
+14. positionY - player's vertical coordinate on Summoner's Rift (from 0 to 14881) by EOI
+15. championKills - enemy champions killed through final blow by the player by EOI
+16. assists - enemy champions killed through assist by the player by EOI
+17. deaths - times the player died by EOI
+18. wardsPlaced - wards used by the player by EOI
+19. buildingKills - buildings destroyed by the player by EOI
+20. monsterKills - elite monsters killed by the player by EOI (= dragonKills + heraldKills + baronKills)
+21. dragonKills - Dragons killed by the player by EOI
+22. heraldKills - Rift Heralds killed by the player by EOI
+23. baronKills - Baron Nashors killed by the player by EOI
 
 
 ## Notes about DTOs
