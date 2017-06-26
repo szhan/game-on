@@ -82,7 +82,8 @@ if league_list_dto is None:
 	raise SystemExit(msg)
 
 
-for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
+entries_to_iter = len(league_list_dto["entries"]) if len(league_list_dto["entries"]) < NBR_PLAYERS else NBR_PLAYERS
+for league_item_dto in league_list_dto["entries"][:entries_to_iter]:
 	player_id = league_item_dto["playerOrTeamId"]
 	print "INFO: Getting data for player " + player_id
 	
@@ -114,7 +115,8 @@ for league_item_dto in league_list_dto["entries"][:NBR_PLAYERS]:
 	fh_matchlist.write(str(account_id) + "\t" + match_list_str + "\n")
 	
 	""" Get match endpoint and timeline data for NBR_GAMES games. """
-	for match_reference_dto in matches[:NBR_GAMES]:
+	matches_to_iter = len(matches) if len(matches) < NBR_GAMES else NBR_GAMES
+	for match_reference_dto in matches[:matches_to_iter]:
 		""" Retrieve game data only if not yet retrieved. """
 		game_id = match_reference_dto["gameId"]
 		if game_id in games_retrieved: continue
