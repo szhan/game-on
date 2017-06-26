@@ -45,6 +45,7 @@ e.g., Challenger ranked solo queue 5x5 game data retrieved from the NA1 server..
 
 ### Description of the CSV files
 The CSV files generated using 'extract_timeline_data.py' assembles timeline data from a bunch of matches. The files contain the following fields:
+```javascript
 1. gameId - unique match id
 2. gameDuration - length of the match in epoch time (~60,000 units are equal to one minute)
 3. timestamp - epoch time of the end of the time interval
@@ -68,6 +69,7 @@ The CSV files generated using 'extract_timeline_data.py' assembles timeline data
 21. dragonKills - Dragons killed by the player by EOI
 22. heraldKills - Rift Heralds killed by the player by EOI
 23. baronKills - Baron Nashors killed by the player by EOI
+```
 
 
 ## Notes about DTOs
