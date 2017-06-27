@@ -29,8 +29,8 @@ fh_endpoints = open(OUT_ENDPOINT_FILE, 'w')
 
 fh_endpoints.write(",".join([
 				### General
-				"participantId", "totalScoreRank",
-				"totalPlayerScore",	"objectivePlayerScore", "combatPlayerScore",
+				"participantId", "role", "lane", "totalScoreRank",
+				"totalPlayerScore", "objectivePlayerScore", "combatPlayerScore",
 				"champLevel", "win", "assists", "deaths",
 				"goldEarned", "goldSpent",
 				### Offense
@@ -79,11 +79,17 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		participant_id = participant["participantId"]
 		team_id = participant["teamId"]
 		participant_team_map[participant_id] = team_id
+		
 		player_stats = participant["stats"]
+		player_role = participant["timeline"]["role"]
+		player_lane = participant["timeline"]["lane"]
+		
 		fh_endpoints.write(",".join(str(x)
 					for x in [
 						### General
 						player_stats["participantId"],
+						player_role,
+						player_lane,
 						player_stats["totalScoreRank"],
 						player_stats["totalPlayerScore"],
 						player_stats["objectivePlayerScore"],
