@@ -7,20 +7,51 @@ from io import StringIO
 parser = argparse.ArgumentParser(description="Extract timeline data from a JSON file and dump into a CSV file.")
 parser.add_argument('-i', '--in-timeline-file', type=str, dest='in_timeline_file', required=True, help='Input file with match timeline data in JSON')
 parser.add_argument('-e', '--in-endpoint-file', type=str, dest='in_endpoint_file', required=True, help='Input file with match endpoint data in JSON')
-parser.add_argument('-o', '--out-file', type=str, dest='out_file', required=True, help='Output file with match timeline data in CSV')
+parser.add_argument('-o', '--out-timeline-file', type=str, dest='out_timeline_file', required=True, help='Output file with match timeline data in CSV')
+parser.add_argument('-f', '--out-endpoint-file', type=str, dest='out_endpoint_file', required=True, help='Output file with match endpoint data in CSV')
 args = parser.parse_args()
 
 
 IN_TIMELINE_FILE = args.in_timeline_file
 IN_ENDPOINT_FILE = args.in_endpoint_file
-OUT_FILE = args.out_file
+OUT_TIMELINE_FILE = args.out_timeline_file
+OUT_ENDPOINT_FILE = args.out_endpoint_file
 
 
+ENDPOINT_DATA = {}	# Final performance characteristics of each player for each game
 ACCOUNT_DATA = {}	# Account id
 TEAM_DATA = {}		# Team id
 DURATION_DATA = {}	# Game duration, "gameDuration" in MatchDto
 OUTCOME_DATA = {}	# Win, "win" in TeamStatsDto
 
+
+fh_endpoints = open(OUT_ENDPOINT_FILE, 'w')
+
+fh_endpoints.write(",".join([
+				### General
+				"participantId", "totalScoreRank",
+				"totalPlayerScore",	"objectivePlayerScore", "combatPlayerScore",
+				"champLevel", "win", "assists", "deaths",
+				"goldEarned", "goldSpent",
+				### Offense
+				"totalDamageDealt", "physicalDamageDealt", "magicDamageDealt", "trueDamageDealt",
+				"totalDamageDealtToChampions", "physicalDamageDealtToChampions", "magicDamageDealtToChampions", "trueDamageDealtToChampions",
+				"largestCriticalStrike", "totalTimeCrowdControlDealt", "timeCCingOthers",
+				### Defense
+				"longestTimeSpentLiving", "damageSelfMitigated",
+				"totalDamageTaken", "physicalDamageTaken", "magicalDamageTaken", "trueDamageTaken",
+				"totalHeal", "totalUnitsHealed",
+				### Building damage
+				"turretKills", "inhibitorKills",
+				"damageDealtToTurrets", "damageDealtToObjectives",
+				### Creep score
+				"totalMinionsKilled", "neutralMinionsKilled", "neutralMinionsKilledTeamJungle", "neutralMinionsKilledEnemyJungle",
+				### Kills
+				"kills", "doubleKills", "tripleKills", "quadraKills", "pentaKills",
+				"largestMultiKill", "killingSprees", "largestKillingSpree",
+				### Vision
+				"visionScore", "wardsPlaced", "wardsKilled", "sightWardsBoughtInGame", "visionWardsBoughtInGame"
+				]) + "\n")
 
 for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 'r')]:
 	"""
@@ -30,8 +61,9 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 	Extract from the corresponding match endpoint data to find the mapping
 	between in-game participant ids and account ids/team ids/game duration/win.
 	"""
-	
 	json_data = json.loads(json_str)
+	
+	participant_endpoint_map = {}	# Dict within dict, game_id to player id to features
 	participant_account_map = {}	# Map participant id to account id
 	participant_team_map = {}	# Map participant id to team id
 	team_outcome_map = {}		# Map team id to win
@@ -47,6 +79,74 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		participant_id = participant["participantId"]
 		team_id = participant["teamId"]
 		participant_team_map[participant_id] = team_id
+		player_stats = participant["stats"]
+		fh_endpoints.write(",".join(str(x)
+					for x in [
+						### General
+						player_stats["participantId"],
+						player_stats["totalScoreRank"],
+						player_stats["totalPlayerScore"],
+						player_stats["objectivePlayerScore"],
+						player_stats["combatPlayerScore"],
+						#player_stats["teamObjective"],
+						player_stats["champLevel"],
+						player_stats["win"],
+						player_stats["assists"],
+						player_stats["deaths"],
+						player_stats["goldEarned"],
+						player_stats["goldSpent"],
+						### Offense
+						player_stats["totalDamageDealt"],
+						player_stats["physicalDamageDealt"],
+						player_stats["magicDamageDealt"],
+						player_stats["trueDamageDealt"],
+						player_stats["totalDamageDealtToChampions"],
+						player_stats["physicalDamageDealtToChampions"],
+						player_stats["magicDamageDealtToChampions"],
+						player_stats["trueDamageDealtToChampions"],
+						player_stats["largestCriticalStrike"],
+						player_stats["totalTimeCrowdControlDealt"],
+						player_stats["timeCCingOthers"],
+						### Defense
+						player_stats["longestTimeSpentLiving"],
+						player_stats["damageSelfMitigated"],
+						player_stats["totalDamageTaken"],
+						player_stats["physicalDamageTaken"],
+						player_stats["magicalDamageTaken"],
+						player_stats["trueDamageTaken"],
+						player_stats["totalHeal"],
+						player_stats["totalUnitsHealed"],
+						### Building
+						#player_stats["firstTowerKill"],
+						#player_stats["firstTowerAssist"],
+						#player_stats["firstInhibitorKill"],
+						#player_stats["firstInhibitorAssist"],
+						player_stats["turretKills"],
+						player_stats["inhibitorKills"],
+						player_stats["damageDealtToTurrets"],
+						player_stats["damageDealtToObjectives"],
+						### Minions
+						player_stats["totalMinionsKilled"],
+						player_stats["neutralMinionsKilled"],
+						player_stats["neutralMinionsKilledTeamJungle"],
+						player_stats["neutralMinionsKilledEnemyJungle"],
+						### Kills
+						#player_stats["firstBloodKill"],
+						#player_stats["firstBloodAssist"],
+						player_stats["kills"],
+						player_stats["doubleKills"],
+						player_stats["tripleKills"],
+						player_stats["quadraKills"],
+						player_stats["pentaKills"],
+						player_stats["largestMultiKill"],
+						player_stats["killingSprees"],
+						player_stats["largestKillingSpree"],
+						player_stats["visionScore"],
+						player_stats["wardsPlaced"],
+						player_stats["wardsKilled"],
+						player_stats["sightWardsBoughtInGame"],
+						player_stats["visionWardsBoughtInGame"]
+						]) + "\n")
 	
 	list_team_stats_dto = json_data["teams"]
 	for team in list_team_stats_dto:
@@ -59,21 +159,22 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 	DURATION_DATA[game_id] = json_data["gameDuration"]
 	OUTCOME_DATA[game_id] = team_outcome_map
 
+fh_endpoints.close()
 
-fh_csv = open(OUT_FILE, 'w')
 
+fh_timelines = open(OUT_TIMELINE_FILE, 'w')
 
 # Print header
-fh_csv.write(",".join([
-			'gameId', 'gameDuration', 'timestamp',
-			'accountId', 'teamId', 'win',
-			'totalGold', 'currentGold', 'level', 'xp',
-			'minionsKilled', 'jungleMinionsKilled',
-			'positionX', 'positionY',
-			'championKills', 'assists', 'deaths',
-			'wardsPlaced', 'buildingKills', 'monsterKills',
-			'dragonKills', 'heraldKills', 'baronKills'
-			]) + "\n")
+fh_timelines.write(",".join([
+				'gameId', 'gameDuration', 'timestamp',
+				'accountId', 'teamId', 'win',
+				'totalGold', 'currentGold', 'level', 'xp',
+				'minionsKilled', 'jungleMinionsKilled',
+				'positionX', 'positionY',
+				'championKills', 'assists', 'deaths',
+				'wardsPlaced', 'buildingKills', 'monsterKills',
+				'dragonKills', 'heraldKills', 'baronKills'
+				]) + "\n")
 
 for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 	[game_id, json_str] = line.split("\t")
@@ -135,32 +236,32 @@ for line in [x.strip() for x in open(IN_TIMELINE_FILE, 'r')]:
 			if "position" not in player_data.keys():
 				player_data["position"] = {"y": "NA", "x": "NA"}
 			
-			fh_csv.write(",".join(str(x)
+			fh_timelines.write(",".join(str(x)
 						for x in [
-							game_id,
-							duration_data,
-							frame["timestamp"],
-							endpoint_data[player_id],		# account id
-							team_data[player_id],			# team id
-							outcome_data[team_data[player_id]],
-							player_data["totalGold"],
-							player_data["currentGold"],
-							player_data["level"],
-							player_data["xp"],
-							player_data["minionsKilled"],
-							player_data["jungleMinionsKilled"],
-							player_data["position"]["x"],
-							player_data["position"]["y"],
-							kills[player_id],
-							assists[player_id],
-							deaths[player_id],
-							wards_placed[player_id],
-							building_kills[player_id],
-							monster_kills[player_id],
-							dragon_kills[player_id],
-							herald_kills[player_id],
-							baron_kills[player_id]
-						]) + "\n")
+								game_id,
+								duration_data,
+								frame["timestamp"],
+								endpoint_data[player_id],		# account id
+								team_data[player_id],			# team id
+								outcome_data[team_data[player_id]],
+								player_data["totalGold"],
+								player_data["currentGold"],
+								player_data["level"],
+								player_data["xp"],
+								player_data["minionsKilled"],
+								player_data["jungleMinionsKilled"],
+								player_data["position"]["x"],
+								player_data["position"]["y"],
+								kills[player_id],
+								assists[player_id],
+								deaths[player_id],
+								wards_placed[player_id],
+								building_kills[player_id],
+								monster_kills[player_id],
+								dragon_kills[player_id],
+								herald_kills[player_id],
+								baron_kills[player_id]
+								]) + "\n")
 
-fh_csv.close()
+fh_timelines.close()
 
