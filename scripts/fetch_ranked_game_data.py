@@ -120,7 +120,8 @@ for league_item_dto in league_list_dto["entries"][:entries_to_iter]:
 	
 	""" Get match endpoint and timeline data for NBR_GAMES games. """
 	matches_to_iter = len(matches) if len(matches) < NBR_GAMES else NBR_GAMES
-	for match_reference_dto in matches[:matches_to_iter]:
+	matches_retrieved = 0
+	for match_reference_dto in matches:
 		""" Retrieve game data only if not yet retrieved. """
 		game_id = match_reference_dto["gameId"]
 		if game_id in games_retrieved: continue
@@ -147,10 +148,15 @@ for league_item_dto in league_list_dto["entries"][:entries_to_iter]:
 				fh_endpoints.write(str(game_id) + "\t" + match_str + "\n")
 				fh_timelines.write(str(game_id) + "\t" + match_timeline_str + "\n")
 				games_retrieved.add(game_id)
+				matches_retrieved += 1
 		else:
 			if match_dto is not None:
 				fh_endpoints.write(str(game_id) + "\t" + match_str + "\n")
 				games_retrieved.add(game_id)
+				matches_retrieved += 1
+		
+		if matches_retrieved >= matches_to_iter:
+			break
 
 
 fh_summoners.close()
