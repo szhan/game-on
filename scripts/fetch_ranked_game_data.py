@@ -21,6 +21,7 @@ parser.add_argument('-q', '--queue-type', type=ct.check_queue_type, dest='queue_
 parser.add_argument('-m', '--max-requests-per-min', type=int, dest='max_requests_per_min', default=40, help='Specify max request per minute (default = 40 sec)')
 parser.add_argument('-n', '--nbr-players', type=int, dest='nbr_players', default=100, help='Specify number of players to get data for (default = 100)')
 parser.add_argument('-g', '--nbr-games', type=int, dest='nbr_games', default=20, help='Specify number of recent games to get data for (default = 20)')
+parser.add_argument('-y', '--get-timeline', dest='get_timeline', action='store_true', help='Retreve timeline data')
 parser.add_argument('-o', '--output-dir', type=str, dest='out_dir', default="data/", help='Provide path to output directory (default = data/)')
 parser.add_argument('-t', '--time-gap', type=int, dest='time_gap', default=3, help='Specify time between requests (default = 3 sec)')
 parser.add_argument('-d', '--debug', dest='debug', action='store_true', help='Switch on debug mode')
@@ -32,6 +33,7 @@ REGION = args.region
 QUEUE_TYPE = args.queue_type
 NBR_PLAYERS = args.nbr_players
 NBR_GAMES = args.nbr_games
+GET_TIMELINE = args.get_timeline
 OUT_DIR = args.out_dir
 TIME_GAP = args.time_gap
 DEBUG = args.debug
@@ -55,12 +57,14 @@ def get_file_name(data_type):
 OUT_FILE_SUMMONERS = get_file_name("summoners")
 OUT_FILE_MATCHLIST = get_file_name("matchlist")
 OUT_FILE_ENDPOINTS = get_file_name("endpoints")
-OUT_FILE_TIMELINES = get_file_name("timelines")
 
 fh_summoners = open(OUT_FILE_SUMMONERS, 'w')
 fh_matchlist = open(OUT_FILE_MATCHLIST, 'w')
 fh_endpoints = open(OUT_FILE_ENDPOINTS, 'w')
-fh_timelines = open(OUT_FILE_TIMELINES, 'w')
+
+if GET_TIMELINE:
+	OUT_FILE_TIMELINES = get_file_name("timelines")
+	fh_timelines = open(OUT_FILE_TIMELINES, 'w')
 
 
 """ Keep track of ids of games for which data are already obtained in order to avoid getting duplicate data. """
@@ -134,19 +138,23 @@ for league_item_dto in league_list_dto["entries"][:entries_to_iter]:
 		if DEBUG: print "DEBUG: " + cmd_get_match_dto
 		[match_dto, match_str] = ct.get_json_data(cmd_get_match_dto, sleep_time=SLEEP_TIME)
 		
-		cmd_get_match_timeline_dto = ct.get_match_timeline_by_match_id(URL_PREFIX, URL_SUFFIX, game_id)
-		if DEBUG: print "DEBUG: " + cmd_get_match_timeline_dto
-		[match_timeline_dto, match_timeline_str] = ct.get_json_data(cmd_get_match_timeline_dto, sleep_time=SLEEP_TIME)
-		
-		if match_dto is not None and match_timeline_dto is not None:
-			fh_endpoints.write(str(game_id) + "\t" + match_str + "\n")
-			fh_timelines.write(str(game_id) + "\t" + match_timeline_str + "\n")
-			games_retrieved.add(game_id)
-		
+		if GET_TIMELINE:
+			cmd_get_match_timeline_dto = ct.get_match_timeline_by_match_id(URL_PREFIX, URL_SUFFIX, game_id)
+			if DEBUG: print "DEBUG: " + cmd_get_match_timeline_dto
+			[match_timeline_dto, match_timeline_str] = ct.get_json_data(cmd_get_match_timeline_dto, sleep_time=SLEEP_TIME)
+			
+			if match_dto is not None and match_timeline_dto is not None:
+				fh_endpoints.write(str(game_id) + "\t" + match_str + "\n")
+				fh_timelines.write(str(game_id) + "\t" + match_timeline_str + "\n")
+				games_retrieved.add(game_id)
+		else:
+			if match_dto is not None:
+				fh_endpoints.write(str(game_id) + "\t" + match_str + "\n")
+				games_retrieved.add(game_id)
 
 
 fh_summoners.close()
 fh_matchlist.close()
 fh_endpoints.close()
-fh_timelines.close()
+if GET_TIMELINE: fh_timelines.close()
 
