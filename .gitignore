@@ -7,3 +7,6 @@ scripts/*.pyc
 # Ignore MAC-specific files
 .DS_Store
 
+# Ignore large data files
+downloads/
+
