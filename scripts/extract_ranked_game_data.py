@@ -4,10 +4,10 @@ import json
 from io import StringIO
 
 
-parser = argparse.ArgumentParser(description="Extract timeline data from a JSON file and dump into a CSV file.")
-parser.add_argument('-i', '--in-timeline-file', type=str, dest='in_timeline_file', required=True, help='Input file with match timeline data in JSON')
+parser = argparse.ArgumentParser(description="Extract endpoint and/or timeline data from JSON files and dump into them into a CSV file")
+parser.add_argument('-i', '--in-timeline-file', type=str, dest='in_timeline_file', help='Input file with match timeline data in JSON')
 parser.add_argument('-e', '--in-endpoint-file', type=str, dest='in_endpoint_file', required=True, help='Input file with match endpoint data in JSON')
-parser.add_argument('-o', '--out-timeline-file', type=str, dest='out_timeline_file', required=True, help='Output file with match timeline data in CSV')
+parser.add_argument('-o', '--out-timeline-file', type=str, dest='out_timeline_file', help='Output file with match timeline data in CSV')
 parser.add_argument('-f', '--out-endpoint-file', type=str, dest='out_endpoint_file', required=True, help='Output file with match endpoint data in CSV')
 args = parser.parse_args()
 
@@ -16,6 +16,9 @@ IN_TIMELINE_FILE = args.in_timeline_file
 IN_ENDPOINT_FILE = args.in_endpoint_file
 OUT_TIMELINE_FILE = args.out_timeline_file
 OUT_ENDPOINT_FILE = args.out_endpoint_file
+
+if (IN_TIMELINE_FILE is None and OUT_TIMELINE_FILE is not None) or (IN_TIMELINE_FILE is not None and OUT_TIMELINE_FILE is None):
+		raise SystemExit("ERROR: Either input or output timeline data file is not provided")
 
 
 ENDPOINT_DATA = {}	# Final performance characteristics of each player for each game
@@ -167,6 +170,9 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 
 fh_endpoints.close()
 
+
+if IN_TIMELINE_FILE is None or OUT_TIMELINE_FILE is None:
+	raise SystemExit()
 
 fh_timelines = open(OUT_TIMELINE_FILE, 'w')
 
