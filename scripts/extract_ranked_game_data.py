@@ -21,6 +21,9 @@ if (IN_TIMELINE_FILE is None and OUT_TIMELINE_FILE is not None) or (IN_TIMELINE_
 		raise SystemExit("ERROR: Either input or output timeline data file is not provided")
 
 
+"""
+Extract match endpoint data
+"""
 ENDPOINT_DATA = {}	# Final performance characteristics of each player for each game
 ACCOUNT_DATA = {}	# Account id
 TEAM_DATA = {}		# Team id
@@ -32,7 +35,7 @@ fh_endpoints = open(OUT_ENDPOINT_FILE, 'w')
 
 fh_endpoints.write(",".join([
 				### General
-				"accountId", "role", "lane", "totalScoreRank",
+				"gameId", "seasonId", "accountId", "champId", "role", "lane", "totalScoreRank",
 				"totalPlayerScore", "objectivePlayerScore", "combatPlayerScore",
 				"champLevel", "win", "assists", "deaths",
 				"goldEarned", "goldSpent",
@@ -65,6 +68,7 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 	between in-game participant ids and account ids/team ids/game duration/win.
 	"""
 	json_data = json.loads(json_str)
+	season_id = json_data["seasonId"]
 	
 	participant_endpoint_map = {}	# Dict within dict, game_id to player id to features
 	participant_account_map = {}	# Map participant id to account id
@@ -81,6 +85,7 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 	for participant in list_participant_dto:
 		participant_id = participant["participantId"]
 		team_id = participant["teamId"]
+		champ_id = participant["championId"]
 		participant_team_map[participant_id] = team_id
 		
 		player_stats = participant["stats"]
@@ -90,7 +95,10 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		fh_endpoints.write(",".join(str(x)
 					for x in [
 						### General
+						game_id,
+						season_id,
 						participant_account_map[participant_id],
+						champ_id,
 						player_role,
 						player_lane,
 						player_stats["totalScoreRank"],
@@ -171,6 +179,9 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 fh_endpoints.close()
 
 
+"""
+Extract match timeline data
+"""
 if IN_TIMELINE_FILE is None or OUT_TIMELINE_FILE is None:
 	raise SystemExit()
 
