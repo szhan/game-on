@@ -33,6 +33,9 @@ OUTCOME_DATA = {}	# Win, "win" in TeamStatsDto
 """ TODO: Take info from champion.json instead """
 MARKSMEN = set([22, 51, 42, 119, 81, 104, 202, 429, 96, 236, 21, 133, 15, 18, 29, 6, 110, 67])
 
+""" Ignore duplicate game data """
+GAME_PLAYER_DATA = set()
+
 fh_endpoints = open(OUT_ENDPOINT_FILE, 'w')
 
 fh_endpoints.write(",".join([
@@ -95,6 +98,12 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		player_stats = participant["stats"]
 		player_role = participant["timeline"]["role"]
 		player_lane = participant["timeline"]["lane"]
+		
+		game_player_id = "_".join([str(game_id), str(participant_id)])
+		if game_player_id in GAME_PLAYER_DATA:
+			continue
+		else:
+			GAME_PLAYER_DATA.add(game_player_id)
 		
 		fh_endpoints.write(",".join(str(x)
 					for x in [
