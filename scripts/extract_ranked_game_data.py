@@ -30,13 +30,16 @@ TEAM_DATA = {}		# Team id
 DURATION_DATA = {}	# Game duration, "gameDuration" in MatchDto
 OUTCOME_DATA = {}	# Win, "win" in TeamStatsDto
 
+""" TODO: Take info from champion.json instead """
+MARKSMEN = set([22, 51, 42, 119, 81, 104, 202, 429, 96, 236, 21, 133, 15, 18, 29, 6, 110, 67])
 
 fh_endpoints = open(OUT_ENDPOINT_FILE, 'w')
 
 fh_endpoints.write(",".join([
 				### General
-				"gameId", "seasonId", "accountId", "champId", "role", "lane", "totalScoreRank",
-				"totalPlayerScore", "objectivePlayerScore", "combatPlayerScore",
+				"gameId", "seasonId", "accountId",
+				"champId", "marksman", "role", "lane",
+				"totalScoreRank", "totalPlayerScore", "objectivePlayerScore", "combatPlayerScore",
 				"champLevel", "win", "assists", "deaths",
 				"goldEarned", "goldSpent",
 				### Offense
@@ -86,6 +89,7 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 		participant_id = participant["participantId"]
 		team_id = participant["teamId"]
 		champ_id = participant["championId"]
+		marksman_bool = True if champ_id in MARKSMEN else False
 		participant_team_map[participant_id] = team_id
 		
 		player_stats = participant["stats"]
@@ -99,6 +103,7 @@ for game_id, json_str in [x.strip().split("\t") for x in open(IN_ENDPOINT_FILE, 
 						season_id,
 						participant_account_map[participant_id],
 						champ_id,
+						marksman_bool,
 						player_role,
 						player_lane,
 						player_stats["totalScoreRank"],
