@@ -4,3 +4,6 @@ API_KEY
 # Ignore byte code
 scripts/*.pyc
 
+# Ignore MAC-specific files
+.DS_Store
+
